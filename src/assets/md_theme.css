@@ -1,0 +1,239 @@
+/* 1. 自定义变体：当 html 标签有 .dark 类时生效 */
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --selection-bg-color: #0080ff29;
+  --code-bg-color: #fefefe;
+  --primary-bg-text-color: #fff;
+  --text-color: rgb(6, 10, 38);
+  --border-color: #d5d5d5;
+  --color-background: #fff;
+  --color-muted-foreground: #737373;
+  --color-link: rgb(0, 112, 247);
+  --color-primary: #0070f7;
+  --color-muted: #f5f5f5;
+}
+
+.dark {
+  --selection-bg-color: #0080ff29;
+  --code-bg-color: #fefefe;
+  --primary-bg-text-color: #fff;
+  --text-color: rgb(6, 10, 38);
+  --border-color: #d5d5d5;
+  --color-background: #fff;
+  --color-muted-foreground: #737373;
+  --color-link: rgb(0, 112, 247);
+  --color-primary: #0070f7;
+  --color-muted: #f5f5f5;
+}
+
+@layer base {
+  .bg-primary {
+    color: var(--primary-bg-text-color);
+  }
+}
+
+/* ---------------------------global--------------------------- */
+.markdown-class-style::selection {
+  background-color: var(--selection-bg-color);
+}
+
+.markdown-class-style button {
+  cursor: pointer;
+  border-color: var(--border-color);
+}
+
+.markdown-class-style button:hover {
+  color: var(--color-primary);
+}
+
+.markdown-class-style div {
+  border-color: var(--border-color);
+}
+
+/* ---------------------------scroll--------------------------- */
+.markdown-class-style [data-streamdown="code-block-body"],
+.markdown-class-style [data-streamdown="table-wrapper"] > div:last-child {
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+  }
+}
+.markdown-class-style [data-streamdown="code-block-body"],
+.markdown-class-style [data-streamdown="table-wrapper"] > div:last-child {
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+}
+.markdown-class-style [data-streamdown="code-block-body"],
+.markdown-class-style [data-streamdown="table-wrapper"] > div:last-child {
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.15);
+  }
+}
+.markdown-class-style [data-streamdown="code-block-body"],
+.markdown-class-style [data-streamdown="table-wrapper"] > div:last-child {
+  &::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 3px;
+  }
+}
+
+/* ---------------------------Heading--------------------------- */
+.markdown-class-style [data-streamdown="heading-1"] {
+  color: var(--text-color);
+}
+.markdown-class-style [data-streamdown="heading-2"] {
+  color: var(--text-color);
+}
+.markdown-class-style [data-streamdown="heading-3"] {
+  color: var(--text-color);
+}
+.markdown-class-style [data-streamdown="heading-4"] {
+  color: var(--text-color);
+}
+.markdown-class-style [data-streamdown="heading-5"] {
+  color: var(--text-color);
+}
+.markdown-class-style [data-streamdown="heading-6"] {
+  color: var(--text-color);
+}
+
+/* --------------------------horizontal-------------------------- */
+.markdown-class-style [data-streamdown="horizontal-rule"] {
+  color: var(--color-muted);
+}
+
+/* -----------------------------link----------------------------- */
+
+.markdown-class-style [data-streamdown="link"] {
+  color: var(--color-primary);
+  text-decoration-line: unset;
+  &:hover {
+    text-decoration-line: underline;
+  }
+}
+
+/* -----------------------------list----------------------------- */
+.markdown-class-style
+  :is([data-streamdown="unordered-list"], [data-streamdown="ordered-list"]) {
+  [type="checkbox"]:disabled:checked {
+    cursor: not-allowed;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  [type="checkbox"] {
+    appearance: none;
+    cursor: pointer;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    width: 16px;
+    height: 16px;
+    margin: 0 8px -2px 0;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  [type="checkbox"]:disabled:checked::after {
+    content: "";
+    opacity: 1;
+    box-sizing: border-box;
+    -webkit-border-start: 0;
+    border: 2px solid #fff;
+    border-top: 0;
+    border-left: 0;
+    width: 5.71429px;
+    height: 9.14286px;
+    transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+    display: table;
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: rotate(45deg) scale(1) translate(-60%, -50%);
+  }
+}
+
+/* -----------------------------table----------------------------- */
+.markdown-class-style [data-streamdown="table-wrapper"] {
+  background-color: var(--color-muted);
+  padding: 0;
+  overflow: hidden;
+
+  & > div:first-child {
+    padding: 8px 8px 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  & > div:last-child {
+    border: none;
+    border-radius: 0;
+  }
+
+  [data-streamdown="table-header"] {
+    height: 40px;
+    background-color: var(--color-background);
+    border-color: var(--border-color);
+  }
+
+  [data-streamdown="table-body"] tr {
+    border-color: var(--border-color);
+  }
+}
+
+/* -----------------------------code block------------------------- */
+.markdown-class-style {
+  [data-streamdown="code-block"] {
+    padding: 0;
+    background-color: var(--color-muted);
+  }
+  [data-streamdown="code-block-header"] {
+    padding: 4px 12px 0;
+    & > span {
+      margin-top: 4px;
+      font-size: 14px;
+    }
+  }
+  [data-streamdown="code-block-actions"] {
+    margin-right: 6px;
+    margin-top: 4px;
+    border-color: var(--color-muted);
+    background-color: var(--color-muted);
+  }
+  [data-streamdown="code-block-body"] {
+    padding: 12px 0;
+    border: none;
+    border-radius: 0;
+    background-color: var(--code-bg-color);
+  }
+}
+
+/* -----------------------------mermaid-block------------------------- */
+.markdown-class-style [data-streamdown="mermaid-block"] {
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--color-muted);
+
+  & > div:first-child {
+    padding: 4px 12px 0;
+  }
+  & > div:first-child span {
+    margin-top: 4px;
+    font-size: 14px;
+  }
+  & > div:last-child {
+    border: none;
+    border-radius: 0;
+    background-color: var(--code-bg-color);
+  }
+  [data-streamdown="mermaid-block-actions"] {
+    margin-right: 6px;
+    margin-top: -8px;
+    border-color: var(--color-muted);
+    background-color: var(--color-muted);
+  }
+}

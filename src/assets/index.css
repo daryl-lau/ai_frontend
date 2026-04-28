@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@source "../../node_modules/streamdown/dist/*.js";
+@source "../../node_modules/@streamdown/code/dist/*.js";
+@import "./md_theme.css";
+
+@layer components {
+  .icon-btn {
+    @apply flex items-center justify-center cursor-pointer 
+           w-8 h-8 box-border rounded-lg;
+    @apply hover:bg-gray-100;
+  }
+
+  .icon-text-btn {
+    @apply flex items-center justify-between px-2 py-0.5 cursor-pointer
+           rounded-lg;
+    @apply hover:bg-gray-100;
+
+    svg {
+      @apply mr-1;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 3px;
+    margin: 14px 14px 0 0;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    &:hover {
+      background: rgba(0, 0, 0, 0.15);
+    }
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+    width: 0;
+  }
+}
+
+body {
+  overflow: hidden;
+}
