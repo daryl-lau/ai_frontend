@@ -16,7 +16,7 @@ const ChatInput = ({ isStreaming, handleSubmit, handleStop }) => {
 
   return (
     <div className="w-full h-full">
-      <div className="w-full h-full flex flex-col border border-gray-200 overflow-hidden rounded-[20px] px-3 py-0">
+      <div className="bg-background w-full h-full flex flex-col border border-gray-200 overflow-hidden rounded-[20px] px-3 py-0">
         <textarea
           className="text-md placeholder-gray-300 scrollbar-thin w-full h-full field-sizing-content min-h-16 max-h-50 border-none resize-none pt-3 pr-1 focus:outline-none"
           value={input}

@@ -25,7 +25,7 @@ const AIMessage = ({ message, isStreaming }) => {
             table: {
               copy: true,
               download: true,
-              fullscreen: false,
+              fullscreen: true,
             },
             code: {
               copy: true,
@@ -35,7 +35,7 @@ const AIMessage = ({ message, isStreaming }) => {
               copy: true,
               download: true,
               panZoom: true,
-              fullscreen: false,
+              fullscreen: true,
             },
           }}
           mermaid={{

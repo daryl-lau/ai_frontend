@@ -37,10 +37,10 @@ export const useAutoScroll = (dependencyArray = []) => {
   }, [checkIfAtBottom, currentScroll]);
 
   useEffect(() => {
-    if (autoScroll && !userScrolled) {
+    if (autoScroll) {
       scrollToBottom();
     }
-  }, [userScrolled, autoScroll, scrollToBottom, ...dependencyArray]);
+  }, [autoScroll, scrollToBottom, ...dependencyArray]);
 
   useEffect(() => {
     const container = containerRef.current;

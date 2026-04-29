@@ -45,39 +45,40 @@ const ChatView = () => {
   const [messages, setMessages] = useState([]);
   const [isAsideShown, setAsideShown] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isBackToBtmShown, setBackToBtmShown] = useState(false);
   const abortRef = useRef(null);
   const threadId = useMemo(() => `session_${Date.now()}`, []);
-  const timerRef = useRef(null);
-  const scrollTimeoutRef = useRef(null);
-  const observerRef = useRef(null);
+
+  // --- 核心状态 ---
   const containerRef = useRef(null);
-  const bottomAnchorRef = useRef(null);
   const rafId = useRef(null); // 存储 rAF ID 用于取消
   const resizeObserver = useRef(null);
   const isAutoScrolling = useRef(false); // 标记是否正在进行自动滚动
   const userScrolledUp = useRef(false); // 标记用户是否手动向上滚动了
 
   /**
-   * 自适应平滑滚动函数
+   * 核心：自适应平滑滚动函数
    */
   const smoothScrollToBottom = () => {
     if (!containerRef.current) return;
 
     const container = containerRef.current;
 
-    // 检查用户意图：如果用户向上滚动了，不要自动滚动
-    console.log(userScrolledUp.current, "userScrolledUp.current");
+    // 1. 检查用户意图：如果用户向上滚动了，不要自动滚动
     if (userScrolledUp.current) return;
 
-    // 启动/继续动画
+    // 2. 启动/继续动画
     const animate = () => {
       if (!containerRef.current) return;
+
+      // 【关键点】每一帧都重新获取最新的 scrollHeight
+      // 这样即使内容突然变高，目标位置也会自动修正，不会出现跳动
       const currentScrollHeight = container.scrollHeight;
       const clientHeight = container.clientHeight;
       const targetPosition = currentScrollHeight - clientHeight;
+
       const currentPos = container.scrollTop;
       const distance = targetPosition - currentPos;
+
       // 如果已经到底部（误差范围内），停止动画
       if (Math.abs(distance) < 10) {
         container.scrollTop = targetPosition;
@@ -85,12 +86,14 @@ const ChatView = () => {
         rafId.current = null;
         return;
       }
-      container.scrollTop += distance * 0.15;
+
+      // 简单的线性插值：每次移动剩余距离的 15%
+      // 这种算法能很好地适应目标位置的动态变化
+      container.scrollTop += distance * 0.3;
 
       rafId.current = requestAnimationFrame(animate);
     };
 
-    console.log("isAutoScrolling", isAutoScrolling);
     if (!isAutoScrolling.current) {
       isAutoScrolling.current = true;
       animate();
@@ -100,79 +103,34 @@ const ChatView = () => {
   // --- 监听高度变化 (ResizeObserver) ---
   useEffect(() => {
     if (!containerRef.current) return;
+
     // 当容器内容高度发生变化时（例如图片加载完成撑大了容器）
     resizeObserver.current = new ResizeObserver(() => {
+      // 只有当用户原本就在底部附近，或者正在进行自动滚动时，才跟随滚动
+      // 如果用户在很远的地方看历史消息，高度变化不应触发滚动
       if (!userScrolledUp.current) {
+        // 注意：这里直接调用 animate 可能会导致冲突，
+        // 更好的方式是让 smoothScrollToBottom 去处理，
+        // 或者直接在这里触发一次“瞬移”到底部（如果是流式输出通常希望紧跟最新内容）
+
+        // 策略：如果正在进行平滑滚动，让它自然继续（因为它每帧都会更新 target）；
+        // 如果没有滚动但高度变了，说明是新内容插入，尝试平滑滚动
         if (!isAutoScrolling.current) {
           smoothScrollToBottom();
         }
       }
     });
+
     resizeObserver.current.observe(containerRef.current);
+
     return () => {
       if (resizeObserver.current) resizeObserver.current.disconnect();
     };
   }, []);
 
-  // --- 核心逻辑：监听 wheel 事件 ---
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e) => {
-      console.log("滚动方向:", e.deltaY > 0 ? "下" : "上");
-      if (e.deltaY < 0) {
-        userScrolledUp.current = true;
-      }
-    };
-
-    // 使用 passive: true 可以提高滚动性能
-    container.addEventListener("wheel", handleWheel, { passive: true });
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-    };
-  }, [isStreaming, isAutoScrolling]);
-
-  // 监听哨兵元素（解决高度不准问题）
-  useEffect(() => {
-    const sentinel = bottomAnchorRef.current;
-    const container = containerRef.current;
-    if (!sentinel || !container) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (timerRef.current) clearTimeout(timerRef.current);
-        const [entry] = entries;
-        // 当哨兵可见 => 说明底部在视口内 => 用户正在看底部 => 隐藏按钮
-        if (entry.isIntersecting) {
-          setBackToBtmShown(false);
-          isAutoScrolling.current = false; // 用户回到了底部，恢复自动跟随模式
-        } else {
-          // 哨兵不可见，且在非自动跟随模式下，显示按钮
-          if (!isAutoScrolling.current) {
-            timerRef.current = setTimeout(() => {
-              setBackToBtmShown(true);
-            }, 1000);
-          }
-        }
-      },
-      {
-        root: container,
-        threshold: 0, // 只要有一点点出现就触发
-        rootMargin: "0px 0px 200px 0px",
-      },
-    );
-
-    observer.observe(sentinel);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      observer.disconnect();
-    };
-  }, []);
-
   // 监听消息变化，触发滚动
   useEffect(() => {
+    console.log(456);
     smoothScrollToBottom();
   }, [messages]);
 
@@ -187,7 +145,6 @@ const ChatView = () => {
   }, []);
 
   function appendAssistantChunk(chunk) {
-    console.log(chunk);
     setMessages((current) => {
       if (current.length === 0) {
         return current;
@@ -306,16 +263,17 @@ const ChatView = () => {
     }
   };
 
-  const handleGotoEnd = useCallback(() => {
-    userScrolledUp.current = false;
-    if (isStreaming) {
-      bottomAnchorRef.current?.scrollIntoView();
-    }
-    smoothScrollToBottom();
-  }, [isStreaming]);
+  // const handleGotoEnd = useCallback(() => {
+  //   if (isStreaming) {
+  //     endRef.current?.scrollIntoView();
+  //   } else {
+  //     scrollToBottom();
+  //   }
+  // }, [isStreaming]);
 
   const handleSubmit = (input) => {
-    userScrolledUp.current = false;
+    // setUserScrolled(false);
+    // setAutoScroll(true);
     sendMessage(input);
   };
   const handleStop = () => {
@@ -356,7 +314,7 @@ const ChatView = () => {
             <div className="w-full h-full flex flex-col items-center">
               <div className="flex-1 w-full relative overflow-hidden">
                 <div
-                  className="w-full h-full relative overflow-y-scroll scrollbar-hide flex flex-col items-center pb-5"
+                  className="w-full h-full relative overflow-y-scroll scrollbar-hide flex flex-col items-center"
                   ref={containerRef}
                 >
                   <ChatMessages
@@ -364,21 +322,22 @@ const ChatView = () => {
                     isStreaming={isStreaming}
                     errorText={null}
                   />
-                  <div className="w-full h-0" ref={bottomAnchorRef} />
+                  {/* ref={endRef} */}
+                  <div className="w-full h-0" />
                 </div>
-                {isBackToBtmShown && (
+                {/* {!checkIfAtBottom() && !autoScroll && (
                   <div
                     className={cn(
-                      "flex items-center justify-center cursor-pointer text-gray-500 transition-all duration-160 ease absolute left-[50%] -translate-x-1/2 bottom-10 w-8 h-8 rounded-2xl border border-gray-200",
+                      "flex items-center justify-center cursor-pointer text-gray-500 transition-all duration-160 ease absolute left-[50%] -translate-x-1/2 bottom-5 w-8 h-8 rounded-2xl border border-gray-200",
                       "hover:bg-gray-50 hover:border-blue-400 hover:text-blue-400 font-size-12 bg-white",
                     )}
-                    onClick={() => handleGotoEnd()}
+                    // onClick={() => handleGotoEnd()}
                   >
                     <ArrowDown />
                   </div>
-                )}
+                )} */}
               </div>
-              <div className="max-w-200 w-[calc(100%-48px)] -mt-5 z-10">
+              <div className="max-w-200 w-[calc(100%-48px)]">
                 <ChatInput
                   isStreaming={isStreaming}
                   handleSubmit={handleSubmit}
