@@ -1,0 +1,30 @@
+.mask {
+  --mask-base-color: 241, 243, 245;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--mask-base-color), 0) 0%,
+    rgba(var(--mask-base-color), 0.5) 0%,
+    rgb(var(--mask-base-color)) 40%
+  );
+}
+
+.active {
+  background-color: #e4edfd;
+  .mask {
+    --mask-base-color: 228, 237, 253;
+  }
+
+  > div:first-child {
+    color: #3964fe;
+  }
+}
+
+.new-chat {
+  &:hover {
+    box-shadow:
+      0 4px 4px rgba(72, 104, 178, 0.04),
+      0 -3px 4px rgba(72, 104, 178, 0.04),
+      0 6px 6px rgba(106, 111, 117, 0.1);
+  }
+  transition: all 0.3s;
+}

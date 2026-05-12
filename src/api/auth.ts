@@ -1,0 +1,8 @@
+import { createApi } from "./api";
+
+const authBaseUri = "/auth/sms";
+export const authApi = {
+  send_sms: createApi(authBaseUri).post("/send"),
+  login: createApi(authBaseUri).post("/login"),
+  current: createApi().get("/auth/current"),
+};

@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "./md_theme.css";
+@source "../../node_modules/streamdown/dist/*.js";
+@source "../../node_modules/@streamdown/code/dist/*.js";
+
+@layer components {
+  .icon-btn {
+    @apply flex items-center justify-center cursor-pointer 
+           w-8 h-8 box-border rounded-lg;
+    @apply hover:bg-gray-100;
+  }
+
+  .icon-text-btn {
+    @apply flex items-center justify-between px-2 py-0.5 cursor-pointer
+           rounded-lg;
+    @apply hover:bg-gray-100;
+
+    svg {
+      @apply mr-1;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 3px;
+    margin: 14px 14px 0 0;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    cursor: initial;
+    &:hover {
+      background: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .scrollbar-thin-hover::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin-hover::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .scrollbar-thin-hover::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+    margin: 14px 14px 0 0;
+  }
+  .scrollbar-thin-hover::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 3px;
+  }
+  .scrollbar-thin-hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+  .scrollbar-thin-hover:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+    width: 0;
+  }
+}
+
+/* Regular 400 */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Regular-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Medium 500 */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Medium-subset.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold 600 */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-SemiBold-subset.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold 700 */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Bold-subset.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic 斜体 */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Italic-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+  overflow: hidden;
+  font-family:
+    "quote-cjk-patch",
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
