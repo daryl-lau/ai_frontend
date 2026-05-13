@@ -16,6 +16,8 @@ import {
   useIsTyping,
   useUserStore,
 } from "@/store/index.tsx";
+import useChatStore from "@/store/useChatStore";
+import useSessions from "@/hooks/useSessions.tsx";
 import "./index.css";
 
 const generateThreadId = customAlphabet("0123456789abcdef", 32);
@@ -67,12 +69,9 @@ const ChatView = () => {
   );
   const userInfo = useUserStore((s: any) => s.userInfo);
   const setIsPending = useIsPending((s: any) => s.setIsPending);
-  const [messages, setMessages] = useState<
-    Array<{ id: string; role: string; content: string }>
-  >([]);
   const [isBackToBtmShown, setBackToBtmShown] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const session_id = useMemo(() => generateThreadId(), []);
+  const newChatSessionId = useMemo(() => generateThreadId(), []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
   const rafId = useRef<number | null>(null); // 存储 rAF ID 用于取消
@@ -81,6 +80,18 @@ const ChatView = () => {
   const navigate = useNavigate();
   const params = useParams<{ session_id?: string }>();
   const location = useLocation();
+
+  const { refetch } = useSessions();
+
+  // 会话操作
+  const messages = useChatStore(
+    useShallow(
+      (state) => state.messagesMap[params.session_id || newChatSessionId] || [],
+    ),
+  );
+  const loadMessages = useChatStore((s: any) => s.loadMessages);
+  const addMessage = useChatStore((s: any) => s.addMessage);
+  const appendToLastMessage = useChatStore((s: any) => s.appendToLastMessage);
 
   const { data } = useQuery({
     queryKey: ["getMessages", location, params.session_id],
@@ -93,28 +104,28 @@ const ChatView = () => {
   });
 
   useEffect(() => {
-    const newChat = location.state?.newChat;
-    if (newChat) {
-      setMessages([]);
-      return;
-    }
-    const input = location.state?.message;
-    const session_id = params.session_id;
-    const user_id = userInfo?.user_id;
-    if (input && session_id && user_id) {
-      sendRequest(input, session_id, user_id);
-    }
-    return () => {
-      window.history.replaceState({}, "", null);
-    };
-  }, [location]);
-
-  useEffect(() => {
     if (data?.length > 0) {
-      console.log("history messages", data);
-      setMessages(data);
+      const session_id = params.session_id;
+      loadMessages(session_id, data);
     }
   }, [data]);
+
+  useEffect(() => {
+    const newChat = location.state?.newChat;
+    if (newChat) {
+      loadMessages(`temp_${+new Date()}`, []); // 开启新对话，清空消息
+      return;
+    }
+    const session_id = params.session_id;
+    const input = location.state?.message;
+    const user_id = userInfo?.user_id;
+    if (input && session_id && user_id) {
+      sendRequest(input, session_id, user_id, () => {
+        refetch();
+        window.history.replaceState({}, "", null);
+      });
+    }
+  }, [location]);
 
   /**
    * 自适应平滑滚动函数
@@ -192,19 +203,10 @@ const ChatView = () => {
   const streamWorkerRef = useRef<Worker | null>(null);
   useEffect(() => {
     const handleStream = (e: MessageEvent) => {
-      const { type, chunks } = e.data;
+      const { type, chunks, sessionId } = e.data;
       if (type == "TICK") {
         setIsTyping(true);
-        setMessages((prevMessages) => {
-          if (prevMessages.length === 0) return prevMessages;
-          const lastMsg = prevMessages[prevMessages.length - 1];
-          const newMessages = [...prevMessages];
-          newMessages[newMessages.length - 1] = {
-            ...lastMsg,
-            content: lastMsg.content + chunks,
-          };
-          return newMessages;
-        });
+        appendToLastMessage(sessionId, chunks);
       }
       if (type == "IDLE") {
         setStreaming(false);
@@ -240,6 +242,7 @@ const ChatView = () => {
       streamWorkerRef.current.postMessage({
         type: "SET_STREAM_STATUS",
         isStreaming: isStreaming,
+        sessionId: params.session_id || newChatSessionId,
       });
     }
   };
@@ -248,6 +251,7 @@ const ChatView = () => {
     input: string,
     session_id: string,
     user_id: string,
+    callback?: () => void,
   ) => {
     const question = input.trim();
     if (!question || isStreaming) {
@@ -257,11 +261,8 @@ const ChatView = () => {
     const assistantMessageId = `assistant_${Date.now()}`;
 
     // 发送用户消息，AI消息待生成
-    setMessages((current) => [
-      ...current,
-      createMessage(userMessageId, "user", question),
-      createMessage(assistantMessageId, "assistant", ""),
-    ]);
+    addMessage(session_id, createMessage(userMessageId, "user", question));
+    addMessage(session_id, createMessage(assistantMessageId, "assistant", ""));
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -292,6 +293,7 @@ const ChatView = () => {
             if (parsed.event === "done") {
               setStreaming(false);
               abortRef.current = null;
+              if (callback) callback();
               return;
             }
 
@@ -353,10 +355,9 @@ const ChatView = () => {
       if (params.session_id && userInfo?.user_id) {
         userScrolledUp.current = false;
         const session_id = params.session_id;
-        console.log(input, session_id, userInfo.user_id);
         sendRequest(input, session_id, userInfo.user_id);
       } else {
-        navigate(`/chat/${session_id}`, {
+        navigate(`/chat/${newChatSessionId}`, {
           state: { message: input, from: location.pathname },
         });
       }

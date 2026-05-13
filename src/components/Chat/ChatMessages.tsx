@@ -1,11 +1,16 @@
 import HumanMessage from "./HumanMessage/HumanMessage.tsx";
 import AIMessage from "./AIMessage/AIMessage.tsx";
-import useChatStore, { Message } from "@/store/useChatStore.tsx";
+import useChatStore from "@/store/useChatStore.tsx";
 import cn from "classnames";
 import React from "react";
+import { useParams } from "react-router";
+import { useShallow } from "zustand/react/shallow";
 
 const ChatMessages: React.FC = React.memo(() => {
-  const messages = [] as Message[];
+  const { session_id } = useParams<{ session_id?: string }>();
+  const messages = useChatStore(
+    useShallow((state) => state.messagesMap[session_id || ""] || []),
+  );
 
   return (
     <>

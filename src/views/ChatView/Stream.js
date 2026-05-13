@@ -6,9 +6,10 @@ let intervalId = null;
 const intervalTimeout = 33;
 const BATCH_SIZE = 1;
 let streamingFlag = false;
+let currentSessionId = null;
 
 self.onmessage = (e) => {
-  const { type, chunk, isStreaming } = e.data;
+  const { type, chunk, isStreaming, sessionId } = e.data;
 
   if (type === "APPEND_CHUNK") {
     // 1. 接收主线程传来的数据块，推入缓冲区
@@ -23,7 +24,11 @@ self.onmessage = (e) => {
           const chunkToSend = stream.shift(BATCH_SIZE);
 
           // 发送回主线程
-          self.postMessage({ type: "TICK", chunks: chunkToSend });
+          self.postMessage({
+            type: "TICK",
+            chunks: chunkToSend,
+            sessionId: currentSessionId,
+          });
         } else {
           // 缓冲区空了，通知主线程“打字”结束
           if (!streamingFlag) {
@@ -36,10 +41,12 @@ self.onmessage = (e) => {
     }
   } else if (type === "SET_STREAM_STATUS") {
     streamingFlag = isStreaming;
+    currentSessionId = sessionId;
   } else if (type === "RESET") {
     // 可选：用于重置状态
     stream.clear();
     streamingFlag = false;
+    currentSessionId = null;
     if (intervalId) {
       clearInterval(intervalId);
       intervalId = null;

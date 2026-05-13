@@ -1,39 +1,31 @@
-import { useEffect, useState, memo, type MouseEvent } from "react";
+import { memo, type MouseEvent } from "react";
 import { PanelRightOpen, MessageSquarePlus } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useIsAsideShown, useUserStore } from "@/store";
-import { chatApi } from "@/api/chat";
 import cn from "classnames";
 import avator from "@/assets/imgs/avator-120-120.png";
-import { useQuery } from "@tanstack/react-query";
 import "./Aside.css";
-
-type SessionItem = { session_id: string; title: string };
+import useSessions from "@/hooks/useSessions";
+import { Session } from "@/store/useChatStore";
 
 const Aside = memo(() => {
   const isAsideShown = useIsAsideShown((s: any) => s.isAsideShown);
   const setAsideShown = useIsAsideShown((s: any) => s.setAsideShown);
   const userInfo = useUserStore((s: any) => s.userInfo);
   const navigate = useNavigate();
-  const params = useParams<{ session_id: string }>();
-  const [currentSessionId, setCurrentSessionId] = useState("");
+  const { sessions, currentSessionId, setCurrentSession } = useSessions();
 
-  const { data } = useQuery<SessionItem[]>({
-    queryKey: ["getSessions"],
-    queryFn: async () => {
-      const res = await chatApi.get_sessions();
-      return res?.sessions ?? [];
-    },
-  });
+  // const { data } = useQuery<Session[]>({
+  //   queryKey: ["getSessions"],
+  //   queryFn: async () => {
+  //     const res = await chatApi.get_sessions();
+  //     return res?.sessions ?? [];
+  //   },
+  // });
 
-  useEffect(() => {
-    setCurrentSessionId(params.session_id || "");
-  }, [params.session_id]);
-
-  const handleClick = (e: MouseEvent<HTMLDivElement>, session_id: string) => {
-    console.log(e.target, e.currentTarget);
+  const handleClick = (_: MouseEvent<HTMLDivElement>, session_id: string) => {
     if (currentSessionId === session_id) return;
-    setCurrentSessionId(session_id);
+    setCurrentSession(session_id);
     goto(session_id);
   };
 
@@ -73,12 +65,12 @@ const Aside = memo(() => {
         </div>
       </div>
       <div className="relative flex-1 px-3 overflow-y-auto scrollbar-thin-hover">
-        {data?.length === 0 && (
+        {sessions?.length === 0 && (
           <div className="text-gray-300 text-sm flex justify-center">
             暂无对话
           </div>
         )}
-        {data?.map(({ session_id, title }: SessionItem) => (
+        {sessions?.map(({ session_id, title }: Session) => (
           <div
             key={session_id}
             onClick={(e) => handleClick(e, session_id)}
