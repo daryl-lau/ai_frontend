@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import useChatStore, { Session } from "@/store/useChatStore";
 import { chatApi } from "@/api/chat";
 import { useEffect } from "react";

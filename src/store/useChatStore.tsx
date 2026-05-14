@@ -37,7 +37,7 @@ interface ChatStore {
 
 const useChatStore = create<ChatStore>()(
   devtools(
-    immer((set, get) => ({
+    immer((set) => ({
       sessions: [],
       messagesMap: {},
       currentSessionId: null,

@@ -7,7 +7,7 @@ import avator from "@/assets/imgs/avator-120-120.png";
 import "./Aside.css";
 import useSessions from "@/hooks/useSessions";
 import useChatStore, { Session } from "@/store/useChatStore";
-import SessionItem from "./sessionItem";
+import SessionItem from "@/components/Aside/SessionItem";
 import { useShallow } from "zustand/react/shallow";
 
 const Aside = memo(() => {
