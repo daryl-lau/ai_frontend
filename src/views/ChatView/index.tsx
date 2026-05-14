@@ -80,7 +80,6 @@ const ChatView: React.FC = () => {
   const setIsPending = useIsPending((s: any) => s.setIsPending);
   const [isBackToBtmShown, setBackToBtmShown] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const newChatSessionId = useMemo(() => generateThreadId(), []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
   const rafId = useRef<number | null>(null); // 存储 rAF ID 用于取消
@@ -94,9 +93,7 @@ const ChatView: React.FC = () => {
 
   // 会话操作
   const messages = useChatStore(
-    useShallow(
-      (state) => state.messagesMap[params.session_id || newChatSessionId] || [],
-    ),
+    useShallow((state) => state.messagesMap[params.session_id || ""] || []),
   );
   const loadMessages = useChatStore((s: any) => s.loadMessages);
   const addMessage = useChatStore((s: any) => s.addMessage);
@@ -134,7 +131,7 @@ const ChatView: React.FC = () => {
         window.history.replaceState({}, "", null);
       });
     }
-  }, [location]);
+  }, [location, params.session_id]);
 
   /**
    * 自适应平滑滚动函数
@@ -251,7 +248,7 @@ const ChatView: React.FC = () => {
       streamWorkerRef.current.postMessage({
         type: SET_STREAM_STATUS_EVENT,
         isStreaming: isStreaming,
-        sessionId: params.session_id || newChatSessionId,
+        sessionId: params.session_id,
       });
     }
   };
@@ -271,7 +268,10 @@ const ChatView: React.FC = () => {
 
     // 发送用户消息，AI消息待生成
     addMessage(session_id, createMessage(userMessageId, USER_ROLE, question));
-    addMessage(session_id, createMessage(assistantMessageId, ASSISTANT_ROLE, ""));
+    addMessage(
+      session_id,
+      createMessage(assistantMessageId, ASSISTANT_ROLE, ""),
+    );
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -366,12 +366,13 @@ const ChatView: React.FC = () => {
         const session_id = params.session_id;
         sendRequest(input, session_id, userInfo.user_id);
       } else {
+        const newChatSessionId = generateThreadId();
         navigate(`/chat/${newChatSessionId}`, {
           state: { message: input, from: location.pathname },
         });
       }
     },
-    [userInfo, params, location],
+    [userInfo, params.session_id, location],
   );
 
   const handleStop = useCallback(() => {
