@@ -1,5 +1,5 @@
 ﻿import { PanelLeftOpen, ArrowDown, MessageSquarePlus } from "lucide-react";
-import { useRef, useState, useMemo, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
 import { apiSseRequest, chatApi } from "@/api/chat.ts";
 import { useQuery } from "@tanstack/react-query";
@@ -88,7 +88,6 @@ const ChatView: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams<{ session_id?: string }>();
   const location = useLocation();
-
   const { refetch } = useSessions();
 
   // 会话操作
