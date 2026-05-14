@@ -2,13 +2,13 @@ import { memo, useState } from "react";
 import { PanelRightOpen, MessageSquarePlus } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useIsAsideShown, useUserStore } from "@/store";
-import cn from "classnames";
-import avator from "@/assets/imgs/avator-120-120.png";
-import "./Aside.css";
-import useSessions from "@/hooks/useSessions";
-import useChatStore, { Session } from "@/store/useChatStore";
-import SessionItem from "@/components/Aside/SessionItem";
 import { useShallow } from "zustand/react/shallow";
+import useChatStore, { Session } from "@/store/useChatStore";
+import avator from "@/assets/imgs/avator-120-120.png";
+import useSessions from "@/hooks/useSessions";
+import SessionItem from "@/components/Aside/SessionItem";
+import cn from "classnames";
+import "./Aside.css";
 
 const Aside = memo(() => {
   const isAsideShown = useIsAsideShown((s: any) => s.isAsideShown);
@@ -18,10 +18,34 @@ const Aside = memo(() => {
   const { sessions } = useSessions();
 
   const pinnedSessions = useChatStore(
-    useShallow((s) => s.sessions.filter((s) => s.is_pinned)),
+    useShallow((s) =>
+      s.sessions
+        .filter((s) => s.is_pinned)
+        .sort(
+          (a, b) =>
+            Number(new Date(b.last_message_at)) -
+            Number(new Date(a.last_message_at)),
+        )
+        .sort(
+          (a, b) =>
+            Number(new Date(b.created_at)) - Number(new Date(a.created_at)),
+        ),
+    ),
   );
   const unpinnedSessions = useChatStore(
-    useShallow((s) => s.sessions.filter((s) => !s.is_pinned)),
+    useShallow((s) =>
+      s.sessions
+        .filter((s) => !s.is_pinned)
+        .sort(
+          (a, b) =>
+            Number(new Date(b.last_message_at)) -
+            Number(new Date(a.last_message_at)),
+        )
+        .sort(
+          (a, b) =>
+            Number(new Date(b.created_at)) - Number(new Date(a.created_at)),
+        ),
+    ),
   );
   const [triggerSession, setTriggerSession] = useState<string>("");
 

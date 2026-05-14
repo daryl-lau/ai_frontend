@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
+import { ASSISTANT_ROLE, USER_ROLE } from "@/constants/index.ts";
 
 export interface Message {
   id: string;
-  role: "user" | "assistant";
+  role: typeof USER_ROLE | typeof ASSISTANT_ROLE;
   content: string;
 }
 
@@ -12,6 +13,8 @@ export interface Session {
   session_id: string;
   title: string;
   is_pinned?: boolean;
+  created_at: string;
+  last_message_at: string;
 }
 
 interface ChatStore {
@@ -21,7 +24,7 @@ interface ChatStore {
 
   // 会话操作
   addSession: (session: Session) => void;
-  deleteSession: (sessionId: string) => void;
+  delSession: (sessionId: string) => void;
   setCurrentSession: (sessionId: string) => void;
   updateSessionTitle: (sessionId: string, title: string) => void;
   loadSessions: (sessions: Session[]) => void;
@@ -65,7 +68,7 @@ const useChatStore = create<ChatStore>()(
           }
         }),
 
-      deleteSession: (sessionId) =>
+      delSession: (sessionId) =>
         set((state) => {
           const index = state.sessions.findIndex(
             (s: any) => s.session_id === sessionId,

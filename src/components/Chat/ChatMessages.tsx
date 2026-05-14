@@ -5,6 +5,7 @@ import cn from "classnames";
 import React from "react";
 import { useParams } from "react-router";
 import { useShallow } from "zustand/react/shallow";
+import { ASSISTANT_ROLE, USER_ROLE } from "@/constants/index.ts";
 
 const ChatMessages: React.FC = React.memo(() => {
   const { session_id } = useParams<{ session_id?: string }>();
@@ -20,10 +21,10 @@ const ChatMessages: React.FC = React.memo(() => {
             key={message.id}
             className={cn(
               "w-full",
-              message.role == "user" && "flex justify-end",
+              message.role === USER_ROLE && "flex justify-end",
             )}
           >
-            {message.role === "assistant" ? (
+            {message.role === ASSISTANT_ROLE ? (
               <AIMessage message={message.content} />
             ) : (
               <HumanMessage message={message.content} />

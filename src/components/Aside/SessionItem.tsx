@@ -1,13 +1,16 @@
-import cn from "classnames";
 import { Ellipsis, PencilLine, Pin, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import useChatStore, { Session } from "@/store/useChatStore";
-import Popover from "../Popover";
-import "./Aside.css";
 import { useMutation } from "@tanstack/react-query";
 import { chatApi } from "@/api/chat";
+import useChatStore, { Session } from "@/store/useChatStore";
+import Popover from "../Popover";
+import cn from "classnames";
+import "./Aside.css";
 
-interface SessionItemProps extends Session {
+interface SessionItemProps extends Omit<
+  Session,
+  "last_message_at" | "created_at"
+> {
   idx: number;
   triggerSession: string;
   setTriggerSession: (session_id: string) => void;
@@ -24,14 +27,27 @@ const SessionItem: React.FC<SessionItemProps> = ({
   const currentSessionId = useChatStore((s) => s.currentSessionId);
   const setCurrentSession = useChatStore((s) => s.setCurrentSession);
   const toggleSessionPin = useChatStore((s) => s.toggleSessionPin);
+  const delSession = useChatStore((s) => s.delSession);
   const navigate = useNavigate();
-
   const toggle_pin = useMutation({
     mutationFn: (session_id: string) => {
       return chatApi.toggle_pin({ session_id });
     },
     onSuccess: (_, variables) => {
       toggleSessionPin(variables);
+    },
+    onError: (error) => {
+      console.error("切换失败", error);
+    },
+  });
+
+  const deleteSession = useMutation({
+    mutationFn: (session_id: string) => {
+      return chatApi.delete_session({ session_id });
+    },
+    onSuccess: (_, variables) => {
+      delSession(variables);
+      navigate("/", { state: { newChat: true } });
     },
     onError: (error) => {
       console.error("切换失败", error);
@@ -83,6 +99,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
         break;
 
       case "delete":
+        deleteSession.mutate(session_id);
         break;
     }
   };

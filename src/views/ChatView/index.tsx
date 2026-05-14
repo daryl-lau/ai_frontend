@@ -1,13 +1,9 @@
 ﻿import { PanelLeftOpen, ArrowDown, MessageSquarePlus } from "lucide-react";
 import { useRef, useState, useMemo, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
-import Aside from "@/components/Aside/Aside.tsx";
-import ChatInput from "@/components/Chat/ChatInput/ChatInput.tsx";
-import ChatMessages from "@/components/Chat/ChatMessages.tsx";
 import { apiSseRequest, chatApi } from "@/api/chat.ts";
 import { useQuery } from "@tanstack/react-query";
 import { customAlphabet } from "nanoid";
-import cn from "classnames";
 import { useShallow } from "zustand/react/shallow";
 import {
   useIsAsideShown,
@@ -16,6 +12,19 @@ import {
   useIsTyping,
   useUserStore,
 } from "@/store/index.tsx";
+import {
+  APPEND_CHUNK_EVENT,
+  IDLE_EVENT,
+  SET_STREAM_STATUS_EVENT,
+  RESET_EVENT,
+  TICK_EVENT,
+  USER_ROLE,
+  ASSISTANT_ROLE,
+} from "@/constants/index.ts";
+import Aside from "@/components/Aside/Aside.tsx";
+import ChatInput from "@/components/Chat/ChatInput/ChatInput.tsx";
+import ChatMessages from "@/components/Chat/ChatMessages.tsx";
+import cn from "classnames";
 import useChatStore from "@/store/useChatStore";
 import useSessions from "@/hooks/useSessions.tsx";
 import "./index.css";
@@ -204,11 +213,11 @@ const ChatView: React.FC = () => {
   useEffect(() => {
     const handleStream = (e: MessageEvent) => {
       const { type, chunks, sessionId } = e.data;
-      if (type == "TICK") {
+      if (type == TICK_EVENT) {
         setIsTyping(true);
         appendToLastMessage(sessionId, chunks);
       }
-      if (type == "IDLE") {
+      if (type == IDLE_EVENT) {
         setStreaming(false);
         setIsTyping(false);
       }
@@ -233,14 +242,14 @@ const ChatView: React.FC = () => {
 
   function appendAssistantChunk(chunk: string) {
     if (streamWorkerRef.current) {
-      streamWorkerRef.current.postMessage({ type: "APPEND_CHUNK", chunk });
+      streamWorkerRef.current.postMessage({ type: APPEND_CHUNK_EVENT, chunk });
     }
   }
   const setStreaming = (isStreaming: boolean) => {
     setIsStreaming(isStreaming);
     if (streamWorkerRef.current) {
       streamWorkerRef.current.postMessage({
-        type: "SET_STREAM_STATUS",
+        type: SET_STREAM_STATUS_EVENT,
         isStreaming: isStreaming,
         sessionId: params.session_id || newChatSessionId,
       });
@@ -261,8 +270,8 @@ const ChatView: React.FC = () => {
     const assistantMessageId = `assistant_${Date.now()}`;
 
     // 发送用户消息，AI消息待生成
-    addMessage(session_id, createMessage(userMessageId, "user", question));
-    addMessage(session_id, createMessage(assistantMessageId, "assistant", ""));
+    addMessage(session_id, createMessage(userMessageId, USER_ROLE, question));
+    addMessage(session_id, createMessage(assistantMessageId, ASSISTANT_ROLE, ""));
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -371,7 +380,7 @@ const ChatView: React.FC = () => {
     }
     if (streamWorkerRef.current) {
       streamWorkerRef.current.postMessage({
-        type: "RESET",
+        type: RESET_EVENT,
       });
     }
     setIsStreaming(false);
