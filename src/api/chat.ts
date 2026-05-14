@@ -5,6 +5,7 @@ const chatBaseUri = "/chat";
 export const chatApi = {
   get_sessions: createApi(chatBaseUri).get("/sessions"),
   get_messages: createApi(chatBaseUri).get("/history_messages"),
+  toggle_pin: createApi(chatBaseUri).post("/sessions/toggle_pin"),
 };
 
 interface SSEAxiosRequestConfig extends AxiosRequestConfig {

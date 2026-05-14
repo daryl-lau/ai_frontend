@@ -136,3 +136,7 @@ body {
     "Helvetica Neue",
     sans-serif;
 }
+
+.react-tiny-popover-container {
+  z-index: 9999;
+}

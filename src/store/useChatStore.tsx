@@ -11,6 +11,7 @@ export interface Message {
 export interface Session {
   session_id: string;
   title: string;
+  is_pinned?: boolean;
 }
 
 interface ChatStore {
@@ -24,6 +25,9 @@ interface ChatStore {
   setCurrentSession: (sessionId: string) => void;
   updateSessionTitle: (sessionId: string, title: string) => void;
   loadSessions: (sessions: Session[]) => void;
+  toggleSessionPin: (sessionId: string) => void;
+  getPinnedSessions: () => Session[];
+  getUnpinnedSessions: () => Session[];
 
   // 消息操作
   addMessage: (sessionId: string, message: Message) => void;
@@ -33,7 +37,7 @@ interface ChatStore {
 
 const useChatStore = create<ChatStore>()(
   devtools(
-    immer((set) => ({
+    immer((set, get) => ({
       sessions: [],
       messagesMap: {},
       currentSessionId: null,
@@ -50,6 +54,16 @@ const useChatStore = create<ChatStore>()(
           state.sessions = sessions;
         });
       },
+
+      toggleSessionPin: (sessionId) =>
+        set((state) => {
+          const index = state.sessions.findIndex(
+            (s) => s.session_id === sessionId,
+          );
+          if (index !== -1) {
+            state.sessions[index].is_pinned = !state.sessions[index].is_pinned;
+          }
+        }),
 
       deleteSession: (sessionId) =>
         set((state) => {

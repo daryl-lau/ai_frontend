@@ -48,7 +48,7 @@ function parseSseEvent(block: string) {
     data: dataLines.join("\n"),
   };
 }
-const ChatView = () => {
+const ChatView: React.FC = () => {
   const { isAsideShown, setAsideShown } = useIsAsideShown(
     useShallow((s: any) => ({
       isAsideShown: s.isAsideShown,

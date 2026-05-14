@@ -15,7 +15,23 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ChatView />,
+        element: (
+          <ProtectedRoute>
+            <ChatView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "chat",
+        element: (
+          <ProtectedRoute>
+            <ChatView />
+          </ProtectedRoute>
+        ),
+        children: [
+          { index: true, element: <ChatMessages /> },
+          { path: ":session_id", element: <ChatMessages /> },
+        ],
       },
       {
         path: "login",
@@ -32,14 +48,6 @@ const router = createBrowserRouter([
             <Upload />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "chat",
-        element: <ChatView />,
-        children: [
-          { index: true, element: <ChatMessages /> },
-          { path: ":session_id", element: <ChatMessages /> },
-        ],
       },
     ],
   },

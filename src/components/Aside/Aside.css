@@ -9,13 +9,20 @@
 }
 
 .active {
-  background-color: #e4edfd;
+  background-color: #e4edfd !important;
   .mask {
     --mask-base-color: 228, 237, 253;
   }
 
   > div:first-child {
     color: #3964fe;
+  }
+}
+
+.trigger-active {
+  background-color: var(--color-gray-100);
+  .mask {
+    opacity: 100%;
   }
 }
 
@@ -27,4 +34,13 @@
       0 6px 6px rgba(106, 111, 117, 0.1);
   }
   transition: all 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
