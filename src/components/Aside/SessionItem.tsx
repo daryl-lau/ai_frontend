@@ -156,7 +156,8 @@ const SessionItem: React.FC<SessionItemProps> = ({
         break;
     }
   };
-
+  const operateCls =
+    "operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md";
   return (
     <>
       {editingTitle ? (
@@ -194,13 +195,14 @@ const SessionItem: React.FC<SessionItemProps> = ({
               align="start"
               clickOutside={clickOutside}
               onContentClick={onContentClick}
+              stopContentPropagation={true}
               transformMode="relative"
               transform={{ top: -12 }} // 微调位置
               content={
                 <div>
                   <div
                     onClick={() => sessionsOperate(session_id, "rename")}
-                    className="operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md"
+                    className={operateCls}
                   >
                     <div className="mr-2">
                       <PencilLine size={16} strokeWidth={1} />
@@ -210,7 +212,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
                   {is_pinned ? (
                     <div
                       onClick={() => sessionsOperate(session_id, "unpin")}
-                      className="operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md"
+                      className={operateCls}
                     >
                       <div className="mr-2">
                         <Pin size={16} strokeWidth={1} />
@@ -220,7 +222,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
                   ) : (
                     <div
                       onClick={() => sessionsOperate(session_id, "pin")}
-                      className="operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md"
+                      className={operateCls}
                     >
                       <div className="mr-2">
                         <Pin size={16} strokeWidth={1} />
@@ -230,7 +232,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
                   )}
                   <div
                     onClick={() => sessionsOperate(session_id, "delete")}
-                    className="operate flex items-center px-3 py-1.5 text-md text-red-500 cursor-pointer hover:bg-gray-50 rounded-md"
+                    className={operateCls}
                   >
                     <div className="mr-2">
                       <Trash2 size={16} strokeWidth={1} />

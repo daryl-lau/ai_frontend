@@ -9,6 +9,8 @@ export interface PopoverProps {
   trigger?: "click" | "hover";
   clickOutside?: (e: MouseEvent) => void;
   onContentClick?: (e: React.MouseEvent) => void;
+  closeAfterClickContent?: boolean;
+  stopContentPropagation?: boolean;
   disabled?: boolean;
   className?: string;
   transformMode?: "relative" | "absolute";
@@ -19,15 +21,12 @@ export interface PopoverProps {
   positions?: Array<"top" | "right" | "bottom" | "left">; // 可选的弹窗位置
   popoverClassName?: string;
   padding?: number;
-  /** hover 延迟显示（ms） */
   enterDelay?: number;
-  /** hover 延迟隐藏（ms） */
   leaveDelay?: number;
-  /** 弹窗内容的最大宽度 */
   maxWidth?: number | string;
 }
 
-const PopoverComponent: React.FC<PopoverProps> = ({
+const Popover: React.FC<PopoverProps> = ({
   children,
   content,
   trigger = "click",
@@ -39,6 +38,8 @@ const PopoverComponent: React.FC<PopoverProps> = ({
   padding = 12,
   enterDelay = 100,
   leaveDelay = 200,
+  closeAfterClickContent = true,
+  stopContentPropagation = false,
   maxWidth = 320,
   ...restProps
 }) => {
@@ -120,9 +121,13 @@ const PopoverComponent: React.FC<PopoverProps> = ({
     : children;
 
   const handleContentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
     if (onContentClick) onContentClick(e);
-    setVisible(false);
+    if (closeAfterClickContent) {
+      if (stopContentPropagation) {
+        e.stopPropagation();
+      }
+      setVisible(false);
+    }
   };
   // 弹窗内容包装
   const popoverContent = React.useMemo(() => {
@@ -154,4 +159,4 @@ const PopoverComponent: React.FC<PopoverProps> = ({
   );
 };
 
-export default PopoverComponent;
+export default Popover;

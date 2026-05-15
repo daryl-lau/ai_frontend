@@ -417,7 +417,6 @@ const ChatView: React.FC = () => {
                 </button>
               </div>
             )}
-            <div>{/* Qwen3.5-千问 */}</div>
           </div>
           <div className="flex flex-1 h-full justify-center overflow-hidden">
             <div className="relative w-full h-full flex flex-col items-center">
