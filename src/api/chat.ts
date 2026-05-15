@@ -7,6 +7,7 @@ export const chatApi = {
   get_messages: createApi(chatBaseUri).get("/history_messages"),
   toggle_pin: createApi(chatBaseUri).post("/sessions/toggle_pin"),
   delete_session: createApi(chatBaseUri).delete("/sessions"),
+  update_title: createApi(chatBaseUri).put("/sessions/title"),
 };
 
 interface SSEAxiosRequestConfig extends AxiosRequestConfig {

@@ -90,10 +90,9 @@ const Aside = memo(() => {
             <div className="px-2 text-[12px] text-gray-400">置顶</div>
             <div>
               {pinnedSessions.map(
-                ({ session_id, title, is_pinned }: Session, idx: number) => (
+                ({ session_id, title, is_pinned }: Session) => (
                   <SessionItem
                     key={session_id}
-                    idx={idx}
                     triggerSession={triggerSession}
                     setTriggerSession={setTriggerSession}
                     session_id={session_id}
@@ -106,10 +105,9 @@ const Aside = memo(() => {
             <div className="px-2 pt-3 text-[12px] text-gray-400">当前</div>
             <div></div>
             {unpinnedSessions.map(
-              ({ session_id, title, is_pinned }: Session, idx: number) => (
+              ({ session_id, title, is_pinned }: Session) => (
                 <SessionItem
                   key={session_id}
-                  idx={idx}
                   triggerSession={triggerSession}
                   setTriggerSession={setTriggerSession}
                   session_id={session_id}

@@ -89,7 +89,9 @@ const useChatStore = create<ChatStore>()(
 
       updateSessionTitle: (sessionId, title) =>
         set((state) => {
-          const session = state.sessions.find((s: any) => s.id === sessionId);
+          const session = state.sessions.find(
+            (s: any) => s.session_id === sessionId,
+          );
           if (session) {
             session.title = title;
           }

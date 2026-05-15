@@ -1,6 +1,7 @@
 // Popover.tsx - 无箭头版本
 import React, { useState, useRef } from "react";
 import { Popover as TinyPopover } from "react-tiny-popover";
+import "./index.css";
 
 export interface PopoverProps {
   children: React.ReactNode;
@@ -130,7 +131,7 @@ const PopoverComponent: React.FC<PopoverProps> = ({
         onClick={handleContentClick}
         onMouseEnter={trigger === "hover" ? handlePopoverMouseEnter : undefined}
         onMouseLeave={trigger === "hover" ? handlePopoverMouseLeave : undefined}
-        className={` bg-white rounded-lg shadow-lg border border-gray-200 ${popoverClassName}`}
+        className={` bg-white rounded-lg shadow-lg border border-gray-200 fadeIn ${popoverClassName}`}
         style={{
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
         }}
