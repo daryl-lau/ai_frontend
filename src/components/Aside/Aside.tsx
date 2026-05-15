@@ -58,7 +58,7 @@ const Aside = memo(() => {
           <div
             onClick={() => navigate("/", { state: { newChat: true } })}
             className={cn(
-              "select-none new-chat text-sm h-10 mx-3 mb-3 mt-1 rounded-m bg-white ",
+              "select-none new-chat text-sm h-10 mx-3 mb-3 mt-1 rounded-md bg-white ",
               "flex items-center justify-center cursor-pointer",
             )}
           >
@@ -74,7 +74,7 @@ const Aside = memo(() => {
           <div className="text-gray-300 text-sm flex justify-center">暂无对话</div>
         ) : (
           <div>
-            <div className="px-2 text-[12px] text-gray-400">置顶</div>
+            <div className="px-2 text-[12px] text-gray-400 select-none">置顶</div>
             <div>
               {pinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
                 <SessionItem
@@ -87,7 +87,7 @@ const Aside = memo(() => {
                 />
               ))}
             </div>
-            <div className="px-2 pt-3 text-[12px] text-gray-400">当前</div>
+            <div className="px-2 pt-3 text-[12px] text-gray-400 select-none">当前</div>
             <div></div>
             {unpinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
               <SessionItem

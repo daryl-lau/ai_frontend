@@ -134,7 +134,7 @@ const Popover: React.FC<PopoverProps> = ({
         onClick={handleContentClick}
         onMouseEnter={trigger === "hover" ? handlePopoverMouseEnter : undefined}
         onMouseLeave={trigger === "hover" ? handlePopoverMouseLeave : undefined}
-        className={` bg-white rounded-lg shadow-lg border border-gray-200 fadeIn ${popoverClassName}`}
+        className={`bg-white rounded-lg shadow-md border border-gray-200 popper-show ${popoverClassName}`}
         style={{
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
         }}

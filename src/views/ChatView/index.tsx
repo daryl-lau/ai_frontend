@@ -462,7 +462,7 @@ const ChatView: React.FC = () => {
                 </div>
               </div>
               <div className="text-gray-400 text-xs mt-3 pb-2">
-                {!params.session_id && <h1>内容由AI生成，可能不准确，请注意核实</h1>}
+                {params.session_id && <h1>内容由AI生成，可能不准确，请注意核实</h1>}
               </div>
             </div>
           </div>
