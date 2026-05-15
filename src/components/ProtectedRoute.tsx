@@ -1,9 +1,7 @@
 import { Navigate, useLocation } from "react-router";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 

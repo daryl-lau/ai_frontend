@@ -5,13 +5,7 @@ import { apiSseRequest, chatApi } from "@/api/chat.ts";
 import { useQuery } from "@tanstack/react-query";
 import { customAlphabet } from "nanoid";
 import { useShallow } from "zustand/react/shallow";
-import {
-  useIsAsideShown,
-  useIsPending,
-  useIsStreaming,
-  useIsTyping,
-  useUserStore,
-} from "@/store/index.tsx";
+import { useIsAsideShown, useIsPending, useIsStreaming, useIsTyping, useUserStore } from "@/store/index.tsx";
 import {
   APPEND_CHUNK_EVENT,
   IDLE_EVENT,
@@ -86,14 +80,14 @@ const ChatView: React.FC = () => {
   const isAutoScrolling = useRef(false); // 标记是否正在进行自动滚动
   const userScrolledUp = useRef(false); // 标记用户是否手动向上滚动了
   const navigate = useNavigate();
-  const params = useParams<{ session_id?: string }>();
+  const params = useParams<{
+    session_id?: string;
+  }>();
   const location = useLocation();
   const { refetch } = useSessions();
 
   // 会话操作
-  const messages = useChatStore(
-    useShallow((state) => state.messagesMap[params.session_id || ""] || []),
-  );
+  const messages = useChatStore(useShallow((state) => state.messagesMap[params.session_id || ""] || []));
   const loadMessages = useChatStore((s: any) => s.loadMessages);
   const addMessage = useChatStore((s: any) => s.addMessage);
   const appendToLastMessage = useChatStore((s: any) => s.appendToLastMessage);
@@ -103,7 +97,9 @@ const ChatView: React.FC = () => {
     enabled: !!(!location.state?.message && params.session_id),
     queryFn: async () => {
       const session_id = params.session_id;
-      const res = await chatApi.get_messages({ session_id });
+      const res = await chatApi.get_messages({
+        session_id,
+      });
       return res?.messages ?? [];
     },
   });
@@ -219,12 +215,9 @@ const ChatView: React.FC = () => {
       }
     };
 
-    streamWorkerRef.current = new Worker(
-      new URL("./Stream.js", import.meta.url),
-      {
-        type: "module",
-      },
-    );
+    streamWorkerRef.current = new Worker(new URL("./Stream.js", import.meta.url), {
+      type: "module",
+    });
     streamWorkerRef.current.addEventListener("message", handleStream);
 
     return () => {
@@ -238,7 +231,10 @@ const ChatView: React.FC = () => {
 
   function appendAssistantChunk(chunk: string) {
     if (streamWorkerRef.current) {
-      streamWorkerRef.current.postMessage({ type: APPEND_CHUNK_EVENT, chunk });
+      streamWorkerRef.current.postMessage({
+        type: APPEND_CHUNK_EVENT,
+        chunk,
+      });
     }
   }
   const setStreaming = (isStreaming: boolean) => {
@@ -252,12 +248,7 @@ const ChatView: React.FC = () => {
     }
   };
 
-  const sendRequest = async (
-    input: string,
-    session_id: string,
-    user_id: string,
-    callback?: () => void,
-  ) => {
+  const sendRequest = async (input: string, session_id: string, user_id: string, callback?: () => void) => {
     const question = input.trim();
     if (!question || isStreaming) {
       return;
@@ -267,10 +258,7 @@ const ChatView: React.FC = () => {
 
     // 发送用户消息，AI消息待生成
     addMessage(session_id, createMessage(userMessageId, USER_ROLE, question));
-    addMessage(
-      session_id,
-      createMessage(assistantMessageId, ASSISTANT_ROLE, ""),
-    );
+    addMessage(session_id, createMessage(assistantMessageId, ASSISTANT_ROLE, ""));
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -367,7 +355,10 @@ const ChatView: React.FC = () => {
       } else {
         const newChatSessionId = generateThreadId();
         navigate(`/chat/${newChatSessionId}`, {
-          state: { message: input, from: location.pathname },
+          state: {
+            message: input,
+            from: location.pathname,
+          },
         });
       }
     },
@@ -392,8 +383,8 @@ const ChatView: React.FC = () => {
     <div className="w-full h-full flex overflow-hidden">
       <div
         className={cn(
-          isAsideShown ? "w-65" : "w-0",
           "h-full min-w-0 overflow-hidden transition-[width] duration-260 ease",
+          isAsideShown ? "w-65" : "w-0",
         )}
       >
         <Aside />
@@ -403,15 +394,16 @@ const ChatView: React.FC = () => {
           <div className=" h-15 min-h-15 flex items-center pt-0 pb-0 pl-3 pr-3">
             {!isAsideShown && (
               <div className="flex mr-2">
-                <button
-                  className="icon-btn"
-                  onClick={() => setAsideShown(true)}
-                >
+                <button className="icon-btn" onClick={() => setAsideShown(true)}>
                   <PanelLeftOpen size={22} strokeWidth={1} />
                 </button>
                 <button
                   className="icon-btn"
-                  onClick={() => navigate("/", { state: { newChat: true } })}
+                  onClick={() =>
+                    navigate("/", {
+                      state: { newChat: true },
+                    })
+                  }
                 >
                   <MessageSquarePlus size={22} strokeWidth={1} />
                 </button>
@@ -422,7 +414,10 @@ const ChatView: React.FC = () => {
             <div className="relative w-full h-full flex flex-col items-center">
               <div className="flex-1 w-full relative overflow-hidden">
                 <div
-                  className="scrollbar-hide w-full h-full relative overflow-y-scroll flex flex-col-reverse items-center pb-5"
+                  className={cn(
+                    "scrollbar-hide flex flex-col-reverse items-center",
+                    "w-full h-full relative overflow-y-scroll pb-5",
+                  )}
                   ref={containerRef}
                   onWheel={onMouseWhell}
                 >
@@ -432,17 +427,14 @@ const ChatView: React.FC = () => {
                 {isBackToBtmShown && (
                   <div
                     className={cn(
-                      "back-to-bottom flex items-center justify-center cursor-pointer text-gray-500 transition-all duration-160 ease absolute left-[50%] -translate-x-1/2 bottom-10 w-8 h-8 rounded-2xl border border-gray-200",
-                      "hover:bg-gray-50 font-size-12 bg-white",
+                      "back-to-bottom w-8 h-8 rounded-2xl border border-gray-200",
+                      "flex items-center justify-center cursor-pointer text-gray-500",
+                      "transition-all duration-160 ease absolute left-[50%] -translate-x-1/2 bottom-10",
+                      "hover:bg-gray-50 font-size-12 bg-white ",
                     )}
                     onClick={() => handleGotoEnd()}
                   >
-                    <div
-                      className={cn(
-                        "rotate-circle",
-                        `opacity-${isTyping ? "100" : "0"}`,
-                      )}
-                    ></div>
+                    <div className={cn("rotate-circle", `opacity-${isTyping ? "100" : "0"}`)}></div>
                     <div>
                       <ArrowDown />
                     </div>
@@ -452,26 +444,25 @@ const ChatView: React.FC = () => {
               <div
                 className={cn(
                   "max-w-200 w-[calc(100%-48px)] transition-translate-y duration-300 ease-out -mt-5 z-10",
-                  !params.session_id &&
-                    "absolute top-1/2 scale-95 -translate-y-full",
+                  !params.session_id && "absolute top-1/2 scale-95 -translate-y-full",
                 )}
               >
                 {!params.session_id && (
-                  <div className="flex justify-center text-primary text-[28px] py-5">
-                    欢迎使用Deeps.cn
-                  </div>
+                  <div className="flex justify-center text-primary text-[28px] py-5">欢迎使用Deeps.cn</div>
                 )}
-                <div className="rounded-[20px] overflow-hidden transition-[height,max-height,border-color,box-shadow,border-radius, translate-y] duration-300 ease-out hover:shadow-[0px_8px_16px_-4px_rgba(0,0,0,0.05)] focus-within:shadow-[0px_8px_16px_-4px_rgba(0,0,0,0.05)]">
-                  <ChatInput
-                    handleSubmit={handleSubmit}
-                    handleStop={handleStop}
-                  />
+                <div
+                  className={cn(
+                    "transition-[height,max-height,border-color,box-shadow,border-radius, translate-y]",
+                    "hover:shadow-[0px_8px_16px_-4px_rgba(0,0,0,0.05)] ",
+                    "focus-within:shadow-[0px_8px_16px_-4px_rgba(0,0,0,0.05)]",
+                    "rounded-[20px] overflow-hidden  duration-300 ease-out",
+                  )}
+                >
+                  <ChatInput handleSubmit={handleSubmit} handleStop={handleStop} />
                 </div>
               </div>
               <div className="text-gray-400 text-xs mt-3 pb-2">
-                {!params.session_id && (
-                  <h1>内容由AI生成，可能不准确，请注意核实</h1>
-                )}
+                {!params.session_id && <h1>内容由AI生成，可能不准确，请注意核实</h1>}
               </div>
             </div>
           </div>

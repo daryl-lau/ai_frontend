@@ -47,9 +47,7 @@
   margin-top: 24px;
   border-radius: 24px;
   border: 1px dashed rgba(143, 103, 54, 0.28);
-  background:
-    radial-gradient(circle at top, rgba(255, 206, 158, 0.32), transparent 45%),
-    rgba(255, 255, 255, 0.56);
+  background: radial-gradient(circle at top, rgba(255, 206, 158, 0.32), transparent 45%), rgba(255, 255, 255, 0.56);
   color: var(--text-strong);
   text-align: center;
   cursor: pointer;

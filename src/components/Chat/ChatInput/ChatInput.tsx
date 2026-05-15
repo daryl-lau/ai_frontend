@@ -34,10 +34,18 @@ const ChatInput: React.FC<{
 
   return (
     <div className="w-full h-full">
-      <div className="bg-background w-full h-full flex flex-col border border-gray-200 overflow-hidden rounded-[20px] px-4 py-0">
+      <div
+        className={cn(
+          "w-full h-full px-4 py-0 flex flex-col overflow-hidden rounded-[20px]",
+          "border border-gray-200 bg-background",
+        )}
+      >
         <textarea
           ref={textareaRef}
-          className="text-md placeholder-gray-300 scrollbar-thin w-full h-full field-sizing-content min-h-16 max-h-50 border-none resize-none pt-3 pr-1 focus:outline-none"
+          className={cn(
+            "text-md scrollbar-thin w-full h-full  min-h-16 max-h-50 pt-3 pr-1 ",
+            "focus:outline-none field-sizing-content border-none resize-none placeholder-gray-300",
+          )}
           value={input}
           onKeyDown={handleEnter}
           onChange={(event) => setInput(event.target.value)}
@@ -60,23 +68,21 @@ const ChatInput: React.FC<{
               <button
                 type="button"
                 className={cn(
-                  "w-8 h-8 flex items-center justify-center bg-blue-400 text-background rounded-[50%] cursor-pointer transition-all duration-260 hover:bg-primary",
+                  "w-8 h-8 flex items-center justify-center bg-blue-400 text-background",
+                  "rounded-[50%] cursor-pointer transition-all duration-260 hover:bg-primary",
                 )}
                 onClick={handleStop}
               >
-                <span
-                  className={cn("inline-block w-3 h-3 bg-background")}
-                ></span>
+                <span className={cn("inline-block w-3 h-3 bg-background")}></span>
               </button>
             ) : (
               <button
                 onClick={() => onSubmit()}
                 type="button"
                 className={cn(
-                  "w-8 h-8 flex items-center justify-center bg-blue-300 text-background rounded-[50%] transition-all duration-260",
-                  !hasInput || isPending
-                    ? "cursor-not-allowed bg-gray-300"
-                    : "cursor-pointer hover:bg-primary",
+                  "w-8 h-8 flex items-center justify-center bg-blue-300 text-background",
+                  "rounded-[50%] transition-all duration-260",
+                  !hasInput || isPending ? "cursor-not-allowed bg-gray-300" : "cursor-pointer hover:bg-primary",
                 )}
               >
                 <ArrowUp />

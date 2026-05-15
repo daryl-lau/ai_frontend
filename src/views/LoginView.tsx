@@ -83,9 +83,7 @@ function LoginView() {
   return (
     <section className="min-h-screen w-full bg-linear-to-br from-slate-100 via-white to-sky-100 flex items-center justify-center px-4">
       <div className=" ">
-        <div className="flex justify-center mb-6 text-[28px] text-primary">
-          Deeps.cn
-        </div>
+        <div className="flex justify-center mb-6 text-[28px] text-primary">Deeps.cn</div>
         <div className="flex w-82">
           <div className="space-y-4 w-full">
             <div>
@@ -119,9 +117,7 @@ function LoginView() {
                     {countdown > 0 ? (
                       <span className="text-gray-300">{`${countdown}s后可重新获取`}</span>
                     ) : (
-                      <span className="text-primary hover:text-primary/80">
-                        获取验证码
-                      </span>
+                      <span className="text-primary hover:text-primary/80">获取验证码</span>
                     )}
                   </button>
                 </div>
@@ -137,11 +133,7 @@ function LoginView() {
               {loading ? "处理中..." : "登录"}
             </button>
 
-            <div className="pl-3 h-10">
-              {message ? (
-                <p className="text-sm text-red-400">{message}</p>
-              ) : null}
-            </div>
+            <div className="pl-3 h-10">{message ? <p className="text-sm text-red-400">{message}</p> : null}</div>
           </div>
         </div>
       </div>

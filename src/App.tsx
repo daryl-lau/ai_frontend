@@ -34,11 +34,7 @@ const App: FC = () => {
     };
 
     window.addEventListener(REDIRECT_TO_LOGIN_EVENT, handleRedirectToLogin);
-    return () =>
-      window.removeEventListener(
-        REDIRECT_TO_LOGIN_EVENT,
-        handleRedirectToLogin,
-      );
+    return () => window.removeEventListener(REDIRECT_TO_LOGIN_EVENT, handleRedirectToLogin);
   }, [navigate]);
 
   return (

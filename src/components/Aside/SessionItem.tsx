@@ -8,10 +8,7 @@ import Popover from "@/components/Popover";
 import cn from "classnames";
 import "./Aside.css";
 
-interface SessionItemProps extends Omit<
-  Session,
-  "last_message_at" | "created_at"
-> {
+interface SessionItemProps extends Omit<Session, "last_message_at" | "created_at"> {
   triggerSession: string;
   setTriggerSession: (session_id: string) => void;
 }
@@ -83,10 +80,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
     navigate(`/chat/${session_id}`, { state: { session_id } });
   };
 
-  const handleClick = (
-    e: React.MouseEvent<HTMLDivElement>,
-    session_id: string,
-  ) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>, session_id: string) => {
     const target = e.target as Element;
     const triggerElement = target.closest(".popover-trigger");
     if (triggerElement) {
@@ -137,10 +131,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
     setEditingTitle(false);
   };
 
-  const sessionsOperate = (
-    session_id: string,
-    type: "rename" | "pin" | "unpin" | "delete",
-  ) => {
+  const sessionsOperate = (session_id: string, type: "rename" | "pin" | "unpin" | "delete") => {
     switch (type) {
       case "rename":
         startEditing();
@@ -156,12 +147,13 @@ const SessionItem: React.FC<SessionItemProps> = ({
         break;
     }
   };
-  const operateCls =
-    "operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md";
+  const operateCls = "operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md";
   return (
     <>
       {editingTitle ? (
-        <div className="px-2 py-1 mb-0.5 text-sm rounded-md overflow-hidden border focus-within:border-primary">
+        <div
+          className={cn("px-2 py-1 mb-0.5 text-sm rounded-md overflow-hidden border", "focus-within:border-primary")}
+        >
           <input
             className="w-full outline-none leading-7.5"
             ref={inputRef}
@@ -176,7 +168,8 @@ const SessionItem: React.FC<SessionItemProps> = ({
         <div
           onClick={(e) => handleClick(e, session_id)}
           className={cn(
-            "opacity-0 animate-[fadeIn_0.4s_ease-out_forwards] hover:bg-gray-100 group rounded-md mb-0.5  cursor-pointer flex items-center justify-between py-1 px-2",
+            "opacity-0  animate-[fadeIn_0.4s_ease-out_forwards] rounded-md py-1 px-2 mb-0.5",
+            "cursor-pointer flex items-center justify-between hover:bg-gray-100 group",
             session_id == currentSessionId && "active",
             session_id == triggerSession && "trigger-active",
           )}
@@ -186,7 +179,8 @@ const SessionItem: React.FC<SessionItemProps> = ({
           </div>
           <div
             className={cn(
-              "absolute z-20 mask opacity-0 group-hover:opacity-100 right-3  pr-2  w-12 h-8 flex justify-end items-center",
+              "pr-2 w-12 h-8 flex justify-end items-center",
+              "absolute right-3 z-20 mask opacity-0 group-hover:opacity-100",
             )}
           >
             <Popover
@@ -200,40 +194,28 @@ const SessionItem: React.FC<SessionItemProps> = ({
               transform={{ top: -12 }} // 微调位置
               content={
                 <div>
-                  <div
-                    onClick={() => sessionsOperate(session_id, "rename")}
-                    className={operateCls}
-                  >
+                  <div onClick={() => sessionsOperate(session_id, "rename")} className={operateCls}>
                     <div className="mr-2">
                       <PencilLine size={16} strokeWidth={1} />
                     </div>
                     <div>重命名</div>
                   </div>
                   {is_pinned ? (
-                    <div
-                      onClick={() => sessionsOperate(session_id, "unpin")}
-                      className={operateCls}
-                    >
+                    <div onClick={() => sessionsOperate(session_id, "unpin")} className={operateCls}>
                       <div className="mr-2">
                         <Pin size={16} strokeWidth={1} />
                       </div>
                       <div>取消置顶</div>
                     </div>
                   ) : (
-                    <div
-                      onClick={() => sessionsOperate(session_id, "pin")}
-                      className={operateCls}
-                    >
+                    <div onClick={() => sessionsOperate(session_id, "pin")} className={operateCls}>
                       <div className="mr-2">
                         <Pin size={16} strokeWidth={1} />
                       </div>
                       <div>置顶</div>
                     </div>
                   )}
-                  <div
-                    onClick={() => sessionsOperate(session_id, "delete")}
-                    className={operateCls}
-                  >
+                  <div onClick={() => sessionsOperate(session_id, "delete")} className={cn(operateCls, "text-red-500")}>
                     <div className="mr-2">
                       <Trash2 size={16} strokeWidth={1} />
                     </div>

@@ -9,10 +9,7 @@ const UPLOAD_CONCURRENCY = 5;
 function formatBytes(size: number) {
   if (!Number.isFinite(size) || size <= 0) return "0 B";
   const units = ["B", "KB", "MB", "GB", "TB"];
-  const index = Math.min(
-    Math.floor(Math.log(size) / Math.log(1024)),
-    units.length - 1,
-  );
+  const index = Math.min(Math.floor(Math.log(size) / Math.log(1024)), units.length - 1);
   const value = size / 1024 ** index;
   return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
 }
@@ -25,10 +22,7 @@ function buildFileKey(file: File) {
   return [file.name, file.size, file.lastModified].join(":");
 }
 
-async function uploadChunkWithRetry(
-  formData: FormData,
-  signal: AbortSignal,
-): Promise<unknown> {
+async function uploadChunkWithRetry(formData: FormData, signal: AbortSignal): Promise<unknown> {
   let lastError: unknown = null;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
     try {
@@ -44,10 +38,7 @@ async function uploadChunkWithRetry(
   throw lastError ?? new Error("Chunk upload failed");
 }
 
-async function runWithConcurrency(
-  tasks: Array<() => Promise<void>>,
-  limit: number,
-) {
+async function runWithConcurrency(tasks: Array<() => Promise<void>>, limit: number) {
   const workerCount = Math.min(Math.max(1, limit), tasks.length);
   let nextTaskIndex = 0;
 
@@ -69,12 +60,8 @@ const Upload: React.FC = () => {
   const [, setUploadedChunks] = useState<number>(0);
   const [, setTotalChunks] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [logs, setLogs] = useState<
-    Array<{ id: string; message: string; time: string }>
-  >([]);
-  const [, setResult] = useState<{ uploadId: string; url: string } | null>(
-    null,
-  );
+  const [logs, setLogs] = useState<Array<{ id: string; message: string; time: string }>>([]);
+  const [, setResult] = useState<{ uploadId: string; url: string } | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const logIdRef = useRef(0);
 
@@ -111,8 +98,7 @@ const Upload: React.FC = () => {
   async function startUpload() {
     if (!file || file.size <= 0) return;
 
-    const chunkSize =
-      Math.max(1, Number(chunkSizeMb) || DEFAULT_CHUNK_SIZE_MB) * 1024 * 1024;
+    const chunkSize = Math.max(1, Number(chunkSizeMb) || DEFAULT_CHUNK_SIZE_MB) * 1024 * 1024;
     const fileKey = buildFileKey(file);
     const nextTotalChunks = Math.ceil(file.size / chunkSize);
     const abortController = new AbortController();
@@ -149,10 +135,7 @@ const Upload: React.FC = () => {
         },
       );
 
-      const uploadedSet = new Set([
-        ...(initResult.uploaded ?? []),
-        ...(statusResult.uploaded ?? []),
-      ]);
+      const uploadedSet = new Set([...(initResult.uploaded ?? []), ...(statusResult.uploaded ?? [])]);
       setUploadedChunks(uploadedSet.size);
       setProgress((uploadedSet.size / nextTotalChunks) * 100);
 
@@ -166,9 +149,7 @@ const Upload: React.FC = () => {
       }
 
       if (pendingChunkIndexes.length > 0) {
-        appendLog(
-          `开始并发上传剩余 ${pendingChunkIndexes.length} 个分片，最大并发 ${UPLOAD_CONCURRENCY}`,
-        );
+        appendLog(`开始并发上传剩余 ${pendingChunkIndexes.length} 个分片，最大并发 ${UPLOAD_CONCURRENCY}`);
       }
 
       const uploadTasks = pendingChunkIndexes.map((chunkIndex) => async () => {
@@ -236,9 +217,7 @@ const Upload: React.FC = () => {
         <label className="file-dropzone">
           <input type="file" onChange={onFileChange} disabled={isUploading} />
           <span>点击选择文件</span>
-          <small>
-            建议使用数百 MB 以上文件验证断点续传流程，当前最多并发 5 个分片
-          </small>
+          <small>建议使用数百 MB 以上文件验证断点续传流程，当前最多并发 5 个分片</small>
         </label>
 
         <div className="field-grid">
@@ -257,27 +236,15 @@ const Upload: React.FC = () => {
           <div className="file-meta">
             <span>当前文件</span>
             <strong>{file?.name ?? "未选择文件"}</strong>
-            <small>
-              {file ? formatBytes(file.size) : "请选择要上传的文件"}
-            </small>
+            <small>{file ? formatBytes(file.size) : "请选择要上传的文件"}</small>
           </div>
         </div>
 
         <div className="action-row">
-          <button
-            type="button"
-            className="primary-button"
-            onClick={startUpload}
-            disabled={isUploading || !file}
-          >
+          <button type="button" className="primary-button" onClick={startUpload} disabled={isUploading || !file}>
             开始上传
           </button>
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={cancelUpload}
-            disabled={!isUploading}
-          >
+          <button type="button" className="secondary-button" onClick={cancelUpload} disabled={!isUploading}>
             取消上传
           </button>
         </div>
@@ -306,9 +273,7 @@ const Upload: React.FC = () => {
         </div>
         <div className="log-console" role="log" aria-live="polite">
           {logs.length === 0 ? (
-            <p className="log-line log-empty">
-              这里会显示初始化、续传、分片上传和合并阶段的进度。
-            </p>
+            <p className="log-line log-empty">这里会显示初始化、续传、分片上传和合并阶段的进度。</p>
           ) : (
             logs.map((log) => (
               <p key={log.id} className="log-line">

@@ -1,11 +1,5 @@
 import axios from "axios";
-import type {
-  Method,
-  AxiosResponse,
-  AxiosError,
-  AxiosRequestConfig,
-  InternalAxiosRequestConfig,
-} from "axios";
+import type { Method, AxiosResponse, AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { ACCESS_TOKEN_KEY, REDIRECT_TO_LOGIN_EVENT } from "@/constants";
 
 // 自定义事件：触发登录重定向
@@ -68,12 +62,7 @@ api.interceptors.response.use(
 
     const isUnauthorized = error?.response?.status === 401;
 
-    if (
-      isUnauthorized &&
-      originalRequest &&
-      !originalRequest._retry &&
-      !isRefreshRequest
-    ) {
+    if (isUnauthorized && originalRequest && !originalRequest._retry && !isRefreshRequest) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -117,10 +106,7 @@ api.interceptors.response.use(
 );
 
 // 定义 createApi 返回的各个 HTTP 方法的函数类型
-type HttpMethod = <T = any>(
-  data?: any,
-  config?: AxiosRequestConfig,
-) => Promise<T>;
+type HttpMethod = <T = any>(data?: any, config?: AxiosRequestConfig) => Promise<T>;
 
 // 定义 createApi 返回的对象类型
 interface ApiMethods {
@@ -131,12 +117,7 @@ interface ApiMethods {
   patch: (url: string) => HttpMethod;
   head: (url: string) => HttpMethod;
   options: (url: string) => HttpMethod;
-  request: <T = any>(
-    method: Method,
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig,
-  ) => Promise<T>;
+  request: <T = any>(method: Method, url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>;
 }
 
 /**
@@ -160,9 +141,7 @@ export const createApi = (baseUrl: string = ""): ApiMethods => {
       case "head":
       case "options":
         // 这些方法使用 params（查询参数）
-        response = await api[
-          methodLower as "get" | "delete" | "head" | "options"
-        ](fullUrl, {
+        response = await api[methodLower as "get" | "delete" | "head" | "options"](fullUrl, {
           params: data, // data 作为查询参数
           ...config,
         });
@@ -172,11 +151,7 @@ export const createApi = (baseUrl: string = ""): ApiMethods => {
       case "put":
       case "patch":
         // 这些方法使用 data（请求体）
-        response = await api[methodLower as "post" | "put" | "patch"](
-          fullUrl,
-          data,
-          config,
-        );
+        response = await api[methodLower as "post" | "put" | "patch"](fullUrl, data, config);
         break;
 
       default:
@@ -220,11 +195,7 @@ export const createApi = (baseUrl: string = ""): ApiMethods => {
       (url: string) =>
       <T = any>(params?: any, config?: AxiosRequestConfig) =>
         request<T>("options", url, params, config),
-    request: <T = any>(
-      method: Method,
-      url: string,
-      data = null,
-      config: AxiosRequestConfig = {},
-    ) => request<T>(method, url, data, config),
+    request: <T = any>(method: Method, url: string, data = null, config: AxiosRequestConfig = {}) =>
+      request<T>(method, url, data, config),
   };
 };

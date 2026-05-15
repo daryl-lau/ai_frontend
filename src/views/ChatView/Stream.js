@@ -1,12 +1,6 @@
 // streamWorker.js
 import Queue from "@/hooks/queue.ts";
-import {
-  APPEND_CHUNK_EVENT,
-  IDLE_EVENT,
-  SET_STREAM_STATUS_EVENT,
-  TICK_EVENT,
-  RESET_EVENT,
-} from "@/constants/index.ts";
+import { APPEND_CHUNK_EVENT, IDLE_EVENT, SET_STREAM_STATUS_EVENT, TICK_EVENT, RESET_EVENT } from "@/constants/index.ts";
 
 const stream = new Queue(1024);
 let intervalId = null;

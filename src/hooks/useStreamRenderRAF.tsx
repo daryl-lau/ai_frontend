@@ -1,10 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useCallback,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useRef, useEffect, useCallback, type Dispatch, type SetStateAction } from "react";
 
 type StreamMessage = { content: string } & Record<string, unknown>;
 
@@ -14,11 +8,7 @@ type IsEmptyFn = () => boolean;
 
 type SetMessagesFn<T extends StreamMessage> = Dispatch<SetStateAction<T[]>>;
 
-const useSmartRAF = <T extends StreamMessage>(
-  reader: ReaderFn,
-  isEmpty: IsEmptyFn,
-  setMessages: SetMessagesFn<T>,
-) => {
+const useSmartRAF = <T extends StreamMessage>(reader: ReaderFn, isEmpty: IsEmptyFn, setMessages: SetMessagesFn<T>) => {
   const rafIdRef = useRef<number | null>(null);
   const isRunningRef = useRef(false);
   const lastTimeRef = useRef(0);

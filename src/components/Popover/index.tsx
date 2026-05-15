@@ -14,9 +14,7 @@ export interface PopoverProps {
   disabled?: boolean;
   className?: string;
   transformMode?: "relative" | "absolute";
-  transform?:
-    | { top?: number; left?: number }
-    | ((popoverState: any) => { top: number; left: number });
+  transform?: { top?: number; left?: number } | ((popoverState: any) => { top: number; left: number });
   align?: "start" | "center" | "end"; // 对齐方式
   positions?: Array<"top" | "right" | "bottom" | "left">; // 可选的弹窗位置
   popoverClassName?: string;

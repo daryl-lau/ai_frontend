@@ -9,21 +9,13 @@ import { ASSISTANT_ROLE, USER_ROLE } from "@/constants/index.ts";
 
 const ChatMessages: React.FC = React.memo(() => {
   const { session_id } = useParams<{ session_id?: string }>();
-  const messages = useChatStore(
-    useShallow((state) => state.messagesMap[session_id || ""] || []),
-  );
+  const messages = useChatStore(useShallow((state) => state.messagesMap[session_id || ""] || []));
 
   return (
     <>
       <div className="w-[calc(100%-48px)] max-w-200">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "w-full",
-              message.role === USER_ROLE && "flex justify-end",
-            )}
-          >
+          <div key={message.id} className={cn("w-full", message.role === USER_ROLE && "flex justify-end")}>
             {message.role === ASSISTANT_ROLE ? (
               <AIMessage message={message.content} />
             ) : (

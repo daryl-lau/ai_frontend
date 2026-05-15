@@ -14,10 +14,7 @@ interface SSEAxiosRequestConfig extends AxiosRequestConfig {
   onChunk?: (chunk: string) => void;
 }
 
-export async function apiSseRequest(
-  path: string,
-  options: SSEAxiosRequestConfig = {},
-) {
+export async function apiSseRequest(path: string, options: SSEAxiosRequestConfig = {}) {
   let lastIndex = 0;
   const response = await api.request({
     url: path,

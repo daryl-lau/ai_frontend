@@ -60,9 +60,7 @@ const useChatStore = create<ChatStore>()(
 
       toggleSessionPin: (sessionId) =>
         set((state) => {
-          const index = state.sessions.findIndex(
-            (s) => s.session_id === sessionId,
-          );
+          const index = state.sessions.findIndex((s) => s.session_id === sessionId);
           if (index !== -1) {
             state.sessions[index].is_pinned = !state.sessions[index].is_pinned;
           }
@@ -70,9 +68,7 @@ const useChatStore = create<ChatStore>()(
 
       delSession: (sessionId) =>
         set((state) => {
-          const index = state.sessions.findIndex(
-            (s: any) => s.session_id === sessionId,
-          );
+          const index = state.sessions.findIndex((s: any) => s.session_id === sessionId);
           if (index !== -1) {
             state.sessions.splice(index, 1);
           }
@@ -89,9 +85,7 @@ const useChatStore = create<ChatStore>()(
 
       updateSessionTitle: (sessionId, title) =>
         set((state) => {
-          const session = state.sessions.find(
-            (s: any) => s.session_id === sessionId,
-          );
+          const session = state.sessions.find((s: any) => s.session_id === sessionId);
           if (session) {
             session.title = title;
           }

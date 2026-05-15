@@ -21,30 +21,16 @@ const Aside = memo(() => {
     useShallow((s) =>
       s.sessions
         .filter((s) => s.is_pinned)
-        .sort(
-          (a, b) =>
-            Number(new Date(b.last_message_at)) -
-            Number(new Date(a.last_message_at)),
-        )
-        .sort(
-          (a, b) =>
-            Number(new Date(b.created_at)) - Number(new Date(a.created_at)),
-        ),
+        .sort((a, b) => Number(new Date(b.last_message_at)) - Number(new Date(a.last_message_at)))
+        .sort((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at))),
     ),
   );
   const unpinnedSessions = useChatStore(
     useShallow((s) =>
       s.sessions
         .filter((s) => !s.is_pinned)
-        .sort(
-          (a, b) =>
-            Number(new Date(b.last_message_at)) -
-            Number(new Date(a.last_message_at)),
-        )
-        .sort(
-          (a, b) =>
-            Number(new Date(b.created_at)) - Number(new Date(a.created_at)),
-        ),
+        .sort((a, b) => Number(new Date(b.last_message_at)) - Number(new Date(a.last_message_at)))
+        .sort((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at))),
     ),
   );
   const [triggerSession, setTriggerSession] = useState<string>("");
@@ -71,7 +57,10 @@ const Aside = memo(() => {
         <div>
           <div
             onClick={() => navigate("/", { state: { newChat: true } })}
-            className="select-none new-chat text-sm flex items-center justify-center h-10 mx-3 mb-3 mt-1 rounded-md cursor-pointer bg-white "
+            className={cn(
+              "select-none new-chat text-sm h-10 mx-3 mb-3 mt-1 rounded-m bg-white ",
+              "flex items-center justify-center cursor-pointer",
+            )}
           >
             <div className="mr-2">
               <MessageSquarePlus size={22} strokeWidth={1} />
@@ -82,30 +71,12 @@ const Aside = memo(() => {
       </div>
       <div className="relative flex-1 px-3 overflow-y-auto scrollbar-thin-hover">
         {sessions?.length === 0 ? (
-          <div className="text-gray-300 text-sm flex justify-center">
-            暂无对话
-          </div>
+          <div className="text-gray-300 text-sm flex justify-center">暂无对话</div>
         ) : (
           <div>
             <div className="px-2 text-[12px] text-gray-400">置顶</div>
             <div>
-              {pinnedSessions.map(
-                ({ session_id, title, is_pinned }: Session) => (
-                  <SessionItem
-                    key={session_id}
-                    triggerSession={triggerSession}
-                    setTriggerSession={setTriggerSession}
-                    session_id={session_id}
-                    title={title}
-                    is_pinned={is_pinned}
-                  />
-                ),
-              )}
-            </div>
-            <div className="px-2 pt-3 text-[12px] text-gray-400">当前</div>
-            <div></div>
-            {unpinnedSessions.map(
-              ({ session_id, title, is_pinned }: Session) => (
+              {pinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
                 <SessionItem
                   key={session_id}
                   triggerSession={triggerSession}
@@ -114,8 +85,20 @@ const Aside = memo(() => {
                   title={title}
                   is_pinned={is_pinned}
                 />
-              ),
-            )}
+              ))}
+            </div>
+            <div className="px-2 pt-3 text-[12px] text-gray-400">当前</div>
+            <div></div>
+            {unpinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
+              <SessionItem
+                key={session_id}
+                triggerSession={triggerSession}
+                setTriggerSession={setTriggerSession}
+                session_id={session_id}
+                title={title}
+                is_pinned={is_pinned}
+              />
+            ))}
           </div>
         )}
       </div>

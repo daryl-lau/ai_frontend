@@ -119,8 +119,7 @@
 }
 
 /* -----------------------------list----------------------------- */
-.markdown-class-style
-  :is([data-streamdown="unordered-list"], [data-streamdown="ordered-list"]) {
+.markdown-class-style :is([data-streamdown="unordered-list"], [data-streamdown="ordered-list"]) {
   [type="checkbox"]:disabled:checked {
     cursor: not-allowed;
     background-color: var(--color-primary);
