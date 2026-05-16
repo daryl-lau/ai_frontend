@@ -21,19 +21,19 @@ const Aside = memo(() => {
     useShallow((s) =>
       s.sessions
         .filter((s) => s.is_pinned)
-        .sort((a, b) => Number(new Date(b.last_message_at)) - Number(new Date(a.last_message_at)))
-        .sort((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at))),
+        .sort((a, b) => Number(new Date(b.updated_at)) - Number(new Date(a.updated_at))),
     ),
   );
   const unpinnedSessions = useChatStore(
     useShallow((s) =>
       s.sessions
         .filter((s) => !s.is_pinned)
-        .sort((a, b) => Number(new Date(b.last_message_at)) - Number(new Date(a.last_message_at)))
-        .sort((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at))),
+        .sort((a, b) => Number(new Date(b.updated_at)) - Number(new Date(a.updated_at))),
     ),
   );
   const [triggerSession, setTriggerSession] = useState<string>("");
+
+  console.log(pinnedSessions);
 
   return (
     <aside

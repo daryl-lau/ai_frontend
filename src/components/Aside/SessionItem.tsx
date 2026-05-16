@@ -8,7 +8,7 @@ import Popover from "@/components/Popover";
 import cn from "classnames";
 import "./Aside.css";
 
-interface SessionItemProps extends Omit<Session, "last_message_at" | "created_at"> {
+interface SessionItemProps extends Omit<Session, "updated_at" | "created_at"> {
   triggerSession: string;
   setTriggerSession: (session_id: string) => void;
 }
@@ -174,9 +174,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
             session_id == triggerSession && "trigger-active",
           )}
         >
-          <div className="overflow-hidden h-8 leading-8 text-sm text-ellipsis text-nowrap select-none">
-            <div>{title}</div>
-          </div>
+          <div className="overflow-hidden h-8 leading-8 text-sm text-ellipsis text-nowrap select-none">{title}</div>
           <div
             className={cn(
               "pr-2 w-12 h-8 flex justify-end items-center",

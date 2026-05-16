@@ -14,7 +14,7 @@ export interface Session {
   title: string;
   is_pinned?: boolean;
   created_at: string;
-  last_message_at: string;
+  updated_at: string;
 }
 
 interface ChatStore {
@@ -63,6 +63,7 @@ const useChatStore = create<ChatStore>()(
           const index = state.sessions.findIndex((s) => s.session_id === sessionId);
           if (index !== -1) {
             state.sessions[index].is_pinned = !state.sessions[index].is_pinned;
+            state.sessions[index].updated_at = new Date().toISOString();
           }
         }),
 
