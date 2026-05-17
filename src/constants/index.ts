@@ -1,5 +1,6 @@
 export const ACCESS_TOKEN_KEY = "token";
 export const REDIRECT_TO_LOGIN_EVENT = "redirectToLogin";
+export const LOGIN_FROM_PATH = "LOGIN_FROM_PATH";
 
 // SSE worker事件类型
 export const APPEND_CHUNK_EVENT = "APPEND_CHUNK";

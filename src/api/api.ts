@@ -57,6 +57,10 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
+    if (originalRequest.url?.includes('/logout')) {
+      return Promise.reject(error);
+    }
+
     // 防止刷新请求本身被再次拦截，防止无限循环
     const isRefreshRequest = originalRequest?.url?.includes("/auth/refresh");
 

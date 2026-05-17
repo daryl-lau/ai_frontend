@@ -12,8 +12,10 @@ const App: FC = () => {
   const location = useLocation();
   const setUserInfo = useUserStore((s: any) => s.setUserInfo);
 
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   const { data } = useQuery({
     queryKey: ["currentUser"],
+    enabled: !!token,
     queryFn: async () => {
       const token = localStorage.getItem(ACCESS_TOKEN_KEY);
       if (!token) {

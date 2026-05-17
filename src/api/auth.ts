@@ -1,11 +1,13 @@
 import { createApi } from "./api";
 
-const authBaseUri = "/auth/sms";
+const authBaseUri = "/auth";
 export const authApi = {
-  send_sms: createApi(authBaseUri).post("/send"),
-  login: createApi(authBaseUri).post("/login"),
-  current: createApi().get("/auth/current"),
-  githubLogin: createApi().get("/auth/github/login"),
-  githubCallback: createApi().get("/auth/github/callback"),
+  sendSMS: createApi(authBaseUri).post("/sms/send"),
+  smsLogin: createApi(authBaseUri).post("/sms/login"),
+  logout: createApi(authBaseUri).post("/logout"),
+  current: createApi(authBaseUri).get("/current"),
+  token: createApi(authBaseUri).get("/token"),
+  githubLogin: createApi(authBaseUri).get("/github/login"),
+  githubCallback: createApi(authBaseUri).get("/github/callback"),
 };
 

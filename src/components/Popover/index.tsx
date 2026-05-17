@@ -13,6 +13,7 @@ export interface PopoverProps {
   stopContentPropagation?: boolean;
   disabled?: boolean;
   className?: string;
+  placement?: "left" | "right" | "top" | "bottom";
   transformMode?: "relative" | "absolute";
   transform?: { top?: number; left?: number } | ((popoverState: any) => { top: number; left: number });
   align?: "start" | "center" | "end"; // 对齐方式
@@ -33,6 +34,7 @@ const Popover: React.FC<PopoverProps> = ({
   popoverClassName = "",
   clickOutside,
   onContentClick,
+  placement = "top",
   padding = 12,
   enterDelay = 100,
   leaveDelay = 200,
@@ -134,7 +136,7 @@ const Popover: React.FC<PopoverProps> = ({
         onClick={handleContentClick}
         onMouseEnter={trigger === "hover" ? handlePopoverMouseEnter : undefined}
         onMouseLeave={trigger === "hover" ? handlePopoverMouseLeave : undefined}
-        className={`bg-white rounded-lg shadow-md border border-gray-200 popper-show ${popoverClassName}`}
+        className={`bg-white rounded-lg shadow-md border border-gray-200 ${placement}-in ${popoverClassName}`}
         style={{
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
         }}
@@ -148,6 +150,7 @@ const Popover: React.FC<PopoverProps> = ({
     <TinyPopover
       isOpen={visible}
       padding={padding}
+      positions={[placement]}
       onClickOutside={onClickOutside}
       content={popoverContent}
       {...restProps}

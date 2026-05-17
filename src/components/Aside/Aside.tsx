@@ -1,19 +1,24 @@
 import { memo, useState } from "react";
 import { PanelRightOpen, MessageSquarePlus } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useIsAsideShown, useUserStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
+import { authApi } from "@/api/auth";
 import useChatStore, { Session } from "@/store/useChatStore";
-import avator from "@/assets/imgs/avator-120-120.png";
+import avatar from "@/assets/imgs/avatar-120-120.png";
 import useSessions from "@/hooks/useSessions";
 import SessionItem from "@/components/Aside/SessionItem";
+import Popover from "@/components/Popover";
 import cn from "classnames";
 import "./Aside.css";
+import { useMutation } from "@tanstack/react-query";
+import { ACCESS_TOKEN_KEY } from "@/constants";
 
 const Aside = memo(() => {
   const isAsideShown = useIsAsideShown((s: any) => s.isAsideShown);
   const setAsideShown = useIsAsideShown((s: any) => s.setAsideShown);
   const userInfo = useUserStore((s: any) => s.userInfo);
+  const location = useLocation();
   const navigate = useNavigate();
   const { sessions } = useSessions();
 
@@ -33,8 +38,23 @@ const Aside = memo(() => {
   );
   const [triggerSession, setTriggerSession] = useState<string>("");
 
-  console.log(pinnedSessions);
+  const logout = useMutation({
+    mutationFn: () => {
+      return authApi.logout();
+    },
+    onSuccess: (res) => {
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      navigate("/login", { replace: true, state: { from: location } });
+    },
+    onError: (error) => {
+      console.error("切换失败", error);
+    },
+  });
+  const handleLogout = () => {
+    logout.mutate();
+  };
 
+  const operateCls = "operate flex items-center px-3 py-1.5 text-md cursor-pointer hover:bg-gray-50 rounded-md";
   return (
     <aside
       className={cn(
@@ -74,7 +94,7 @@ const Aside = memo(() => {
           <div className="text-gray-300 text-sm flex justify-center">暂无对话</div>
         ) : (
           <div>
-            <div className="px-2 text-[12px] text-gray-400 select-none">置顶</div>
+            {pinnedSessions.length > 0 && <div className="px-2 text-[12px] text-gray-400 select-none">置顶</div>}
             <div>
               {pinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
                 <SessionItem
@@ -87,7 +107,9 @@ const Aside = memo(() => {
                 />
               ))}
             </div>
-            <div className="px-2 pt-3 text-[12px] text-gray-400 select-none">当前</div>
+            {pinnedSessions.length > 0 && unpinnedSessions.length > 0 && (
+              <div className="px-2 pt-3 text-[12px] text-gray-400 select-none">当前</div>
+            )}
             <div></div>
             {unpinnedSessions.map(({ session_id, title, is_pinned }: Session) => (
               <SessionItem
@@ -102,14 +124,27 @@ const Aside = memo(() => {
           </div>
         )}
       </div>
-      <div className="px-3 py-2">
-        <div className="flex items-center cursor-pointer px-2 py-2 hover:bg-gray-100 rounded-md">
-          <div className="w-7 h-7 rounded-[50%] overflow-hidden mr-3 select-none">
-            <img src={userInfo?.avator ? userInfo?.avator : avator} alt="" />
+      <Popover
+        placement="top"
+        transformMode="relative"
+        transform={{ top: 12 }}
+        content={
+          <div className="w-56">
+            <div className={cn(operateCls)} onClick={handleLogout}>
+              退出登录
+            </div>
           </div>
-          <div className="font-bold select-none">{userInfo?.nickname}</div>
+        }
+      >
+        <div className="px-3 py-2">
+          <div className="flex items-center cursor-pointer px-2 py-2 hover:bg-gray-100 rounded-md">
+            <div className="w-7 h-7 rounded-[50%] overflow-hidden mr-3 select-none">
+              <img src={userInfo?.avatar ? userInfo?.avatar : avatar} alt="" />
+            </div>
+            <div className="font-bold select-none">{userInfo?.nickname}</div>
+          </div>
         </div>
-      </div>
+      </Popover>
     </aside>
   );
 });

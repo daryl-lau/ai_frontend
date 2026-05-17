@@ -183,7 +183,7 @@ const SessionItem: React.FC<SessionItemProps> = ({
           >
             <Popover
               key={session_id}
-              positions={["right"]} // 自动选择可用位置
+              placement="right"
               align="start"
               clickOutside={clickOutside}
               onContentClick={onContentClick}

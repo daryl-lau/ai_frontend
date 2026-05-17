@@ -1,15 +1,9 @@
 import { Navigate } from "react-router";
-import { useUserStore } from "@/store";
+import useAuth from "@/hooks/useAuth";
 
 const LoginRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const userInfo = useUserStore((s: any) => s.userInfo);
-  const isInitializing = useUserStore((s: any) => s.isInitializing);
-
-  if (isInitializing) {
-    return <></>;
-  }
-
-  if (userInfo && userInfo.userid) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
