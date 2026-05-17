@@ -42,7 +42,7 @@ const Aside = memo(() => {
     mutationFn: () => {
       return authApi.logout();
     },
-    onSuccess: (res) => {
+    onSuccess: () => {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       navigate("/login", { replace: true, state: { from: location } });
     },
